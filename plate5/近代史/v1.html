@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>长征精神 薪火永续 | 新时代传承</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "微软雅黑", "楷体", sans-serif;
+            overflow: hidden;
+            background: url("b/back.png");
+            background-size: cover;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* 轮播区 */
+        .carousel-section {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            background:transparent;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+.carousel-title {
+    text-align: center;
+    font-size: 36px;
+    color: #fff;
+    margin-bottom: 40px;
+    margin-top: -50px;
+    position: relative;
+}
+.carousel-title::before,
+.carousel-title::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 130px;
+    height: 3px;
+    transform: translateY(-50%);
+}
+.carousel-title::before {
+    left: -150px;
+    background: linear-gradient(to right, transparent, #fff 70%);
+}
+.carousel-title::after {
+    right: -150px;
+    background: linear-gradient(to left, transparent, #fff 70%);
+}
+
+       .carousel-subtitle {
+    text-align: center;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 40px;
+    margin-top: -10px;
+}
+
+        .carousel-container {
+    width: 90%;
+    max-width: 1400px;
+    height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+}
+        .carousel-track {
+            display: flex;
+            width: max-content;
+            position: absolute;
+            will-change: transform;
+        }
+
+
+.carousel-item {
+    width: 300px;
+    height: 390px;
+    margin: 0 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border: 2px solid #B89B58;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    display: block;
+    object-position: center top;
+    flex-shrink: 0;
+}
+
+.carousel-item h3 {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: #fff;
+    background: rgba(0,0,0,0.7);
+    padding: 0;
+    font-size: 16px;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+        .carousel-item:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        /* 热区：鼠标悬停控制方向 */
+        .hotzone-left, .hotzone-right {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 20%;
+            z-index: 5;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .hotzone-left {
+            left: 0;
+        }
+
+        .hotzone-right {
+            right: 0;
+        }
+
+        /* 向下箭头 */
+        .arrow-down {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            fill: #fff;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            transition: fill 0.3s ease;
+        }
+
+        .arrow-down:hover {
+            fill: #C8161C;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* 轮播过渡状态 */
+        .carousel-section.shrink {
+            transform: scale(0.6) translateY(-20%);
+            opacity: 0.4;
+        }
+
+        .carousel-section.exit {
+            transform: translateY(-100%) scale(0.6);
+            opacity: 0;
+            z-index: 5;
+        }
+
+        /* 弹窗 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            display: flex;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .modal-img {
+            max-width: 50%;
+            max-height: 80vh;
+            object-fit: cover;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .modal-info {
+            width: 400px;
+            background: #F5F0E6;
+            padding: 30px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .modal-info h3 {
+            color: #C8161C;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .modal-info p {
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .info-keyword {
+            font-weight: bold;
+            color: #B89B58;
+            display: inline-block;
+            background: rgba(184, 155, 88, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* 信封 */
+        .envelope-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 15;
+            background: url("b/back.png");
+            background-size: cover;
+        }
+
+        .envelope {
+            width: 60vw;
+            max-width: 800px;
+            height: 40vh;
+            max-height: 400px;
+            background: #f8f4e9;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 1s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            transform: translateY(100%);
+            border: 1px solid #d4c9a8;
+            border-radius: 4px;
+        }
+
+        .envelope.rise {
+            transform: translateY(0);
+        }
+
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #f8f4e9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 左上角邮编框 */
+        .envelope .postcode-boxes {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 8px;
+        }
+        .envelope .postcode-boxes span {
+            width: 24px;
+            height: 24px;
+            border: 1px solid #c8161c;
+        }
+
+        /* 右上角邮票框 */
+        .envelope .stamp-area {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border: 1px dashed #c8161c;
+        }
+
+        /* 右下角文字信息 */
+        .envelope .footer-info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            text-align: right;
+            color: #c8161c;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: #e6dccc;
+            transform-origin: top;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
+            z-index: 10;
+            transition: transform 0.8s ease 0.3s;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .open-btn {
+            background: #C8161C;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            animation: breathe 2s infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            transition: background 0.3s ease;
+        }
+
+        .open-btn:hover {
+            background: #a01217;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        /* 信纸 */
+       .letter-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    background: url("b/back.png");
+    background-size: cover;
+}
+
+        .letter {
+            width: 85vw;
+            height: 85vh;
+            max-width: 1000px;
+            max-height: 800px;
+            background: #F5F0E6;
+            background-image: url('https://img0.baidu.com/it/u=3893201234,123456789&fm=253&fmt=auto&app=138&f=JPEG?w=1920&h=1080');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 80px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            overflow-y: auto;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.8s ease;
+        }
+
+        .letter.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .letter-title {
+            text-align: center;
+            font-size: 28px;
+            color: #222;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .letter-content {
+            line-height: 2.2;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .letter-paragraph {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+            margin-bottom: 20px;
+            text-indent: 2em;
+            position: relative;
+        }
+
+        /* 擦除遮罩模拟手写效果 */
+        .letter-paragraph::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #F5F0E6;
+            transition: width 0.8s ease;
+            transition-delay: 0.2s;
+        }
+
+        .letter-paragraph.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .letter-paragraph.show::before {
+            width: 0;
+        }
+        /* 签名板块样式 */
+        .sign-wrap{
+            margin-top: 40px;
+            padding-top:20px;
+            border-top:1px solid #ccc;
+        }
+        .sign-title{
+            font-size:22px;
+            font-weight:bold;
+            margin-top:20px;
+            text-align: right; /* 右对齐到原落款位置 */
+        }
+        .sign-board {
+            background: transparent; /* 与轮播容器背景完全一致（透明显示页面背景） */
+            border: none; /* 彻底移除所有边框 */
+            border-radius: 10px;
+            cursor: crosshair;
+            margin-bottom: 20px;
+        }
+        .sign-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .btn-red {
+            background: #C8161C;
+            color: #fff;
+        }
+        .btn-red:hover {
+            background: #a01217;
+        }
+        .btn-gold {
+            background: #B89B58;
+            color: #fff;
+        }
+        .btn-gold:hover {
+            background: #9a8045;
+        }
+        .sign-count {
+            font-size: 18px;
+        }
+        /* 加粗放大号召文字 */
+        .call-text{
+            font-size:24px;
+            font-weight:bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 轮播区 -->
+    <div class="carousel-section" id="carouselSection">
+        <h1 class="carousel-title">秉心传薪火</h1>
+        <p class="carousel-subtitle">我行其野，芃芃其麦</p>
+        <p class="carousel-subtitle">他们走在时代的前沿，将长征精神内化为生命底蕴</p>
+        <p class="carousel-subtitle">历经八十载精神赓续，与先辈并肩续写时代篇章</p>
+        
+        
+        <div class="carousel-container" id="carouselContainer">
+            <div class="hotzone-left" id="leftHotzone"></div>
+            <div class="carousel-track" id="carouselTrack">
+                <!-- 图片项将通过JS生成 -->
+            </div>
+            <div class="hotzone-right" id="rightHotzone"></div>
+        </div>
+        
+        <svg class="arrow-down" id="arrowDown" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15l-5-5h10l-5 5z" />
+        </svg>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <img id="modalImg" class="modal-img" src="" alt="人物大图">
+            <div class="modal-info">
+                <h3 id="modalName"></h3>
+                <p id="modalBio"></p>
+                <p><span class="info-keyword" id="modalKeyword"></span></p>
+                <p id="modalExplanation"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 信封 -->
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope" id="envelope">
+            <div class="envelope-front">
+                <div class="postcode-boxes">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="stamp-area"></div>
+                <div class="footer-info">
+                    新时代传承 · 长征精神主题<br>
+                    寄往：每一位青年的心中
+                </div>
+                <div class="envelope-flap"></div>
+                <button class="open-btn" id="openBtn">轻点开启这封信</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 信纸 -->
+    <div class="letter-container" id="letterContainer">
+        <div class="letter" id="letter">
+            <h2 class="letter-title">长征精神之信</h2>
+            <div class="letter-content" id="letterContent">
+                <!-- 段落将通过JS生成 -->
+            </div>
+            <!-- 内嵌签名区域 -->
+            <div class="sign-wrap">
+    <div style="position:relative;width:900px;height:400px;margin:0 auto;">
+        <div style="position:absolute;top:20px;left:0px;text-align:center;">
+            <img src="sign/cz.png" style="width:160px;height:auto;">
+        </div>
+        <div style="position:absolute;top:20px;right:30px;text-align:center;">
+            <img src="sign/wch.png" style="width:160px;height:auto;">
+        </div>
+        <div style="position:absolute;top:180px;left:-40px;text-align:center;">
+            <img src="sign/wzr.png" style="width:160px;height:auto;">
+        </div>
+        <div style="position:absolute;bottom:20px;right:30px;text-align:center;">
+            <img src="" style="width:160px;height:auto;">
+        </div>
+        <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);text-align:center;">
+            <img src="" style="width:160px;height:auto;">
+        </div>
+        <canvas id="signatureCanvas" class="sign-board" width="900" height="400"></canvas>
+    </div>
+
+    <div class="sign-buttons">
+        <button class="btn btn-red" id="clearBtn">清除签名</button>
+        <button class="btn btn-gold" id="submitBtn">提交签名</button>
+    </div>
+    
+</div>
+    <script>
+        // 人物数据
+        const peopleData = [
+            {
+                name: "陈祥榕",
+                bio: "00后戍边战士，在加勒万河谷冲突中英勇战斗，壮烈牺牲。他在日记中写下：“清澈的爱，只为中国。”用最纯粹的青春，践行了对祖国和人民的忠诚。", 
+                keyword: "坚定信念 革命理想高于天",
+                explanation: "在最危险的时刻，他用生命诠释了什么是革命理想高于天。",
+                img: "p/chenxiangrong.jpg"
+            },
+            {
+                name: "黄文秀",
+                bio: "广西百坭村第一书记，放弃大城市的工作机会，主动请缨到贫困山区扶贫。她带领88户418人脱贫，2019年在山洪中因公殉职，年仅30岁。",
+                keyword: "为民奉献 初心不改",
+                explanation: "她把青春和生命都献给了脱贫攻坚事业，用行动践行了共产党人的初心。",
+                img: "p/hwx.jpg"
+            },
+            {
+                name: "张桂梅",
+                bio: "丽江华坪女子高级中学校长，扎根贫困山区40余年，创办全国第一所免费女子高中，帮助2000多名山区女孩圆了大学梦。",
+                keyword: "艰苦奋斗 无私奉献",
+                explanation: "她身患多种疾病，却依然坚守讲台，用生命点亮了大山里的希望。",
+                img: "p/zgm.jpg"
+            },
+            {
+                name: "周承钰",
+                bio: "文昌航天发射场最年轻的女指挥员，在“天问一号”火星探测任务中担任火箭连接器系统指挥员，被网友称为“航天花木兰”。",
+                keyword: "敢闯新路 勇挑重担",
+                explanation: "她不怕苦、不怕累，在航天事业的征途上展现了新时代青年的担当。",
+                img: "p/zcy.jpg"
+            },
+            {
+                name: "塞罕坝三代人",
+                bio: "50多年来，三代塞罕坝人在荒漠沙地上艰苦奋斗，创造了荒原变林海的人间奇迹，铸就了伟大的塞罕坝精神。",
+                keyword: "艰苦奋斗 久久为功",
+                explanation: "他们用三代人的青春和汗水，书写了生态文明建设的壮丽篇章。",
+                img: "p/shb.jpg"
+            },
+            {
+                name: "抗疫医护群体",
+                bio: "新冠疫情期间，全国数百万医护人员逆行出征，连续奋战在抗疫一线，用血肉之躯筑起了守护人民生命健康的坚固防线。",
+                keyword: "团结奋斗 不怕牺牲",
+                explanation: "他们舍小家为大家，在没有硝烟的战场上展现了伟大的抗疫精神。",
+                img: "p/kyyh.jpg"
+            }
+        ];
+
+        // 信件内容（已删除"新时代的青年"落款）
+const letterParagraphs=[
+    "亲爱的朋友：",
+    "当你缓缓展开这封信时，长征胜利的号角已吹响整整90年。",
+    "忆往昔，风雨如晦的岁月里，红军战士身着单薄衣衫，顶着凛冽寒风翻越皑皑夹金山；",
+    "饥寒交迫之时，他们以野草树皮果腹充饥，徒步跋涉茫茫松潘草地。",
+    "两万五千里漫漫征途，血战湘江、四渡赤水、飞夺泸定桥，无数将士以血肉之躯冲破重重封锁，在绝境之中铸就震撼世间的英雄史诗。",
+    "他们用生命诠释了坚定信念、艰苦奋斗与为国奉献的崇高内涵。",
+    "<span class='call-text'>尽管长征已经结束，但长征精神方兴未艾，它恰似这封长笺，笔墨赓续不绝，先辈起笔记录九十载风雨征途，静待我辈落笔续写。</span>",
+    "看今朝，喀喇昆仑的冰峰上，年轻的战士用血肉之躯筑起界碑；",
+    "大山深处的村庄里，扶贫干部以青春扎根乡土耕耘美好希望；",
+    "星辰大海的征途上，航天人用智慧追求卓越梦想；",
+    "疫情肆虐的危急时刻，白衣天使用逆行的身影守护生命……",
+    "他们皆是新时代的长征人，秉持初心书写时代篇章，以行动诠释长征精神的传承要义。",
+    "高山仰止，景行行止。临渊羡鱼，不如退而结网。",
+    "传承长征精神，从来不是只望着先烈壮举心生感慨，也并非仅赞叹榜样奉献便止步不前。",
+    "不啻微茫，造炬成阳，这份精神与每一个人都息息相关。",
+    "延续精神最好的方式，便是将信念藏于心间，把担当落到实处：",
+    "立足本职，踏实尽责；为人真诚，和善包容；坚韧不拔，迎难而上；心怀家国，坚守本心。",
+    "当长征精神洇染人格底色，我们便能以平凡之行肩负使命，让精神火种代代绵延。",
+    "怀揣这份精神力量，坚守初心踏实前行，不负岁月与先辈期许。",
+    "<span class='call-text'>若你愿意，不妨执笔着墨，携手昔日前辈与今朝楷模，一同成为这封精神长信的光荣执笔人</span>",
+    "此致<br>敬礼！<span style='text-align:right;display:block;margin-top:20px;'>执笔人：</span>"
+]
+        // DOM元素
+        const carouselSection = document.getElementById('carouselSection');
+        const carouselTrack = document.getElementById('carouselTrack');
+        const leftHotzone = document.getElementById('leftHotzone');
+        const rightHotzone = document.getElementById('rightHotzone');
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modalImg');
+        const modalName = document.getElementById('modalName');
+        const modalBio = document.getElementById('modalBio');
+        const modalKeyword = document.getElementById('modalKeyword');
+        const modalExplanation = document.getElementById('modalExplanation');
+        const arrowDown = document.getElementById('arrowDown');
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const envelope = document.getElementById('envelope');
+        const openBtn = document.getElementById('openBtn');
+        const letterContainer = document.getElementById('letterContainer');
+        const letter = document.getElementById('letter');
+        const letterContent = document.getElementById('letterContent');
+        const canvas = document.getElementById('signatureCanvas');
+        const clearBtn = document.getElementById('clearBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const countNum = document.getElementById('countNum');
+
+        // 全局状态
+        let position = 0;
+        let defaultSpeed = 0.5;
+        let hoverSpeed = 2;
+        let currentSpeed = defaultSpeed;
+        let direction = 1;
+        let isRunning = true;
+        let currentPage = 0;
+        let itemWidth = 0;
+        let isAnimating = false;
+
+        // 轮播逻辑
+        function initCarousel() {
+            for (let i = 0; i < 3; i++) {
+                peopleData.forEach((person, index) => {
+                    const item = createCarouselItem(person, index);
+                    carouselTrack.appendChild(item);
+                });
+            }
+            const firstItem = document.querySelector('.carousel-item');
+            itemWidth = firstItem.offsetWidth + 30;
+            position = itemWidth * peopleData.length;
+            carouselTrack.style.transform = `translateX(-${position}px)`;
+            animateCarousel();
+
+            leftHotzone.addEventListener('mouseenter', () => {
+                if (currentPage === 0) {
+                    direction = -1;
+                    currentSpeed = hoverSpeed;
+                }
+            });
+            leftHotzone.addEventListener('mouseleave', () => {
+                if (currentPage === 0) {
+                    direction = 1;
+                    currentSpeed = defaultSpeed;
+                }
+            });
+
+            rightHotzone.addEventListener('mouseenter', () => {
+                if (currentPage === 0) {
+                    direction = 1;
+                    currentSpeed = hoverSpeed;
+                }
+            });
+            rightHotzone.addEventListener('mouseleave', () => {
+                if (currentPage === 0) {
+                    direction = 1;
+                    currentSpeed = defaultSpeed;
+                }
+            });
+        }
+
+        function createCarouselItem(person, index) {
+            const item = document.createElement('div');
+            item.className = 'carousel-item';
+            item.innerHTML = `<img src="${person.img}" alt="${person.name}"><h3>${person.name}</h3>`;
+            
+            item.addEventListener('mouseenter', () => {
+                if (currentPage === 0) isRunning = false;
+            });
+            item.addEventListener('mouseleave', () => {
+                if (currentPage === 0) isRunning = true;
+            });
+            
+            item.addEventListener('click', () => showModal(person));
+            return item;
+        }
+
+        function animateCarousel() {
+            if (isRunning) {
+                position += currentSpeed * direction;
+                if (position >= itemWidth) {
+                    carouselTrack.appendChild(carouselTrack.firstElementChild);
+                    position -= itemWidth;
+                }
+                if (position <= 0) {
+                    carouselTrack.insertBefore(carouselTrack.lastElementChild, carouselTrack.firstElementChild);
+                    position += itemWidth;
+                }
+                carouselTrack.style.transform = `translateX(-${position}px)`;
+            }
+            requestAnimationFrame(animateCarousel);
+        }
+
+        function showModal(person) {
+            modalImg.src = person.img;
+            modalName.textContent = person.name;
+            modalBio.textContent = person.bio;
+            modalKeyword.textContent = person.keyword;
+            modalExplanation.textContent = person.explanation;
+            modal.style.display = 'flex';
+            isRunning = false;
+        }
+
+        function hideModal() {
+            modal.style.display = 'none';
+            if (currentPage === 0) isRunning = true;
+        }
+
+        function initLetterContent() {
+            letterParagraphs.forEach(para => {
+                const p = document.createElement('p');
+                p.className = 'letter-paragraph';
+                p.innerHTML = para;
+                letterContent.appendChild(p);
+            });
+        }
+
+        
+        function showLetterLines() {
+            document.querySelectorAll('.letter-paragraph').forEach((p, i) => {
+                setTimeout(() => p.classList.add('show'), i * 150);
+            });
+        }
+
+        function goToEnvelope() {
+            if (currentPage !== 0 || isAnimating) return;
+            isAnimating = true; currentPage = 1; isRunning = false;
+            carouselSection.classList.add('shrink');
+            setTimeout(() => {
+                envelopeContainer.style.display = 'flex';
+                setTimeout(() => {
+                    envelope.classList.add('rise');
+                    setTimeout(() => isAnimating = false, 1000);
+                }, 100);
+                setTimeout(() => carouselSection.classList.add('exit'), 800);
+            }, 300);
+        }
+
+        function goToCarousel() {
+            if (currentPage !== 1 || isAnimating) return;
+            isAnimating = true;
+            envelope.classList.remove('rise');
+            carouselSection.classList.remove('exit');
+            setTimeout(() => {
+                envelopeContainer.style.display = 'none';
+                carouselSection.classList.remove('shrink');
+                currentPage = 0; isRunning = true;
+                setTimeout(() => isAnimating = false, 500);
+            }, 800);
+        }
+
+        function goToLetter() {
+            if (currentPage !== 1 || isAnimating) return;
+            isAnimating = true;
+            envelope.classList.add('open');
+            setTimeout(() => {
+                envelopeContainer.style.display = 'none';
+                letterContainer.style.display = 'flex';
+                setTimeout(() => {
+                    letter.classList.add('show');
+                    setTimeout(showLetterLines, 300);
+                    currentPage = 2;
+                    letter.scrollTop = 0;
+                    setTimeout(() => isAnimating = false, 800);
+                }, 100);
+            }, 800);
+        }
+
+        function backToEnvelope() {
+            if (currentPage !== 2 || isAnimating) return;
+            isAnimating = true;
+            letter.classList.remove('show');
+            setTimeout(() => {
+                letterContainer.style.display = 'none';
+                envelopeContainer.style.display = 'flex';
+                envelope.classList.remove('open');
+                currentPage = 1;
+                setTimeout(() => isAnimating = false, 500);
+            }, 500);
+        }
+
+        // 滚轮逻辑
+        window.addEventListener('wheel', (e) => {
+            if (isAnimating) return;
+            const delta = e.deltaY;
+
+            if (currentPage === 0) {
+                if (delta > 0) goToEnvelope();
+            } 
+            else if (currentPage === 1) {
+                if (delta < 0) goToCarousel();
+                else e.preventDefault();
+            }
+        }, { passive: false });
+
+        letter.addEventListener('wheel', (e) => {
+            if (isAnimating) return;
+            const delta = e.deltaY;
+            const scrollTop = letter.scrollTop;
+            const scrollHeight = letter.scrollHeight;
+            const clientHeight = letter.clientHeight;
+            const isAtTop = scrollTop <= 5;
+
+            if (delta < 0 && isAtTop) {
+                e.preventDefault();
+                backToEnvelope();
+            }
+        }, { passive: false });
+
+        arrowDown.addEventListener('click', goToEnvelope);
+        openBtn.addEventListener('click', goToLetter);
+        modal.addEventListener('click', e => { if (e.target === modal) hideModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') hideModal(); });
+
+        // ========== 修复签名板不能写字 ==========
+function initSignatureArea() {
+  const ctx = canvas.getContext('2d');
+  let isDrawing = false;
+
+  canvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+  });
+  canvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.strokeStyle = '#C8161C';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+  });
+  canvas.addEventListener('mouseup', () => isDrawing = false);
+  canvas.addEventListener('mouseleave', () => isDrawing = false);
+
+  clearBtn.onclick = () => ctx.clearRect(0,0,canvas.width,canvas.height);
+  submitBtn.onclick = () => alert('签名提交成功！');
+}
+// ========== 修复结束 ==========
+
+        window.addEventListener('load', () => {
+            initCarousel();
+            initLetterContent();
+            initSignatureArea();
+        });
+    </script>
+</body>
+</html>

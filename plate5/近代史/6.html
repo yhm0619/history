@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长征 · 信仰之路</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Serif SC', STSong, SimSun, KaiTi, serif;
+  background: #0a0a14;
+  color: #d4cfc4;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+body::-webkit-scrollbar { width: 5px; }
+body::-webkit-scrollbar-track { background: #0a0a14; }
+body::-webkit-scrollbar-thumb { background: #8b1a1a; border-radius: 3px; }
+
+/* ============================================================
+   PARTICLE CANVAS (HERO BACKGROUND)
+   ============================================================ */
+#particleCanvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(10,10,20,0.94); backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(180,130,40,0.18);
+  transition: all 0.4s ease;
+  padding: 0 1rem;
+}
+.navbar-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+}
+.nav-brand {
+  font-weight: 700; color: #d4b050; letter-spacing: 0.08em;
+  font-size: 0.95rem; white-space: nowrap;
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 0.15rem; align-items: center; list-style: none; }
+.nav-links a {
+  color: #a09888; font-size: 0.85rem; letter-spacing: 0.05em;
+  padding: 0.4rem 0.7rem; cursor: pointer; text-decoration: none;
+  transition: color 0.3s; white-space: nowrap;
+  font-family: inherit; border-radius: 2px;
+}
+.nav-links a:hover, .nav-links a.active { color: #e8d48b; }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px; z-index: 1001;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: #c8c0b0; transition: all 0.3s; border-radius: 1px;
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+/* ============================================================
+   HERO / COVER
+   ============================================================ */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(180,20,30,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 60%, rgba(180,130,40,0.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 70% 50%, rgba(160,20,20,0.08) 0%, transparent 50%);
+}
+.hero-title {
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #c41e3a;
+  text-shadow: 0 0 80px rgba(196,30,58,0.5), 0 0 160px rgba(196,30,58,0.2), 0 4px 8px rgba(0,0,0,0.9);
+  animation: heroTitleIn 1.6s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes heroTitleIn {
+  from { opacity: 0; transform: translateY(40px); letter-spacing: 0.35em; }
+  to   { opacity: 1; transform: translateY(0); letter-spacing: 0.12em; }
+}
+.hero-sub {
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  color: #c9a84c;
+  letter-spacing: 0.25em;
+  margin-top: 1.2rem;
+  animation: heroSubIn 1.6s cubic-bezier(0.16,1,0.3,1) 0.45s both;
+}
+@keyframes heroSubIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-line {
+  width: 80px; height: 1px;
+  background: linear-gradient(90deg, transparent, #c41e3a, transparent);
+  margin: 2rem auto 0;
+  animation: heroSubIn 1.6s cubic-bezier(0.16,1,0.3,1) 0.7s both;
+}
+
+.scroll-hint {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  animation: hintFloat 2.2s ease-in-out infinite;
+}
+.scroll-hint span { font-size: 0.78rem; color: #6b6058; letter-spacing: 0.12em; }
+.scroll-hint .arrow {
+  width: 22px; height: 22px;
+  border-right: 2px solid #8b7355; border-bottom: 2px solid #8b7355;
+  transform: rotate(45deg);
+}
+@keyframes hintFloat {
+  0%, 100% { opacity: 0.45; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 1; transform: translateX(-50%) translateY(10px); }
+}
+
+/* ============================================================
+   SECTION COMMONS
+   ============================================================ */
+.section {
+  position: relative; z-index: 1;
+  padding: 5rem 1rem;
+}
+.section-header {
+  text-align: center; max-width: 700px; margin: 0 auto 3.5rem;
+}
+.section-header h2 {
+  font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+  font-weight: 900; color: #e8d48b;
+  letter-spacing: 0.1em;
+}
+.section-header .divider {
+  width: 50px; height: 2px;
+  background: linear-gradient(90deg, transparent, #c41e3a, transparent);
+  margin: 1rem auto;
+}
+.section-header p {
+  color: #7b6b58; font-size: 0.9rem; letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+#timeline { background: linear-gradient(180deg, #0a0a14 0%, #110d20 20%, #0a0a14 50%, #120a16 75%, #0a0a14 100%); }
+
+.timeline-inner {
+  max-width: 1100px; margin: 0 auto; position: relative;
+}
+/* Vertical center line */
+.timeline-inner::before {
+  content: '';
+  position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 2px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(196,30,58,0.3) 5%,
+    rgba(196,30,58,0.6) 15%,
+    rgba(196,30,58,0.6) 85%,
+    rgba(196,30,58,0.3) 95%,
+    transparent 100%);
+}
+
+/* SVG Route overlay */
+.timeline-svg-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+
+/* Timeline row */
+.tl-row {
+  display: flex; align-items: flex-start;
+  margin-bottom: 1rem; position: relative; z-index: 1;
+}
+.tl-row:nth-child(odd) { justify-content: flex-start; }
+.tl-row:nth-child(even) { justify-content: flex-end; }
+.tl-row.center { justify-content: center; }
+
+.tl-card {
+  width: 46%; max-width: 460px;
+  background: linear-gradient(145deg, rgba(22,18,32,0.92), rgba(16,12,24,0.96));
+  border: 1px solid rgba(180,130,40,0.12);
+  border-radius: 3px;
+  padding: 1.8rem 2rem;
+  position: relative;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1),
+              transform 0.8s cubic-bezier(0.16,1,0.3,1),
+              border-color 0.6s ease,
+              box-shadow 0.6s ease;
+}
+.tl-card.visible {
+  opacity: 1; transform: translateY(0);
+}
+.tl-card:hover {
+  border-color: rgba(200,160,60,0.45);
+  box-shadow: 0 8px 40px rgba(180,20,30,0.12), 0 0 80px rgba(180,20,30,0.04);
+  transform: translateY(-3px);
+}
+.tl-card.visible:hover { transform: translateY(-3px); }
+
+/* Left-side card accent bar */
+.tl-row:nth-child(odd) .tl-card::after {
+  content: '';
+  position: absolute; top: 0; right: 0; width: 3px; height: 100%;
+  background: linear-gradient(180deg, #c41e3a, transparent 70%);
+  border-radius: 0 2px 2px 0;
+}
+/* Right-side card accent bar */
+.tl-row:nth-child(even) .tl-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  background: linear-gradient(180deg, #c41e3a, transparent 70%);
+  border-radius: 2px 0 0 2px;
+}
+.tl-row.center .tl-card::after {
+  left: 0; right: auto;
+  background: linear-gradient(180deg, #c9a84c, #c41e3a, transparent 70%);
+}
+
+/* Timeline dot on center line */
+.tl-dot {
+  position: absolute; top: 2.2rem;
+  left: 50%; transform: translateX(-50%);
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #c41e3a;
+  box-shadow: 0 0 12px rgba(196,30,58,0.6), 0 0 30px rgba(196,30,58,0.2);
+  z-index: 2;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.tl-row.visible-dot .tl-dot {
+  transform: translateX(-50%) scale(1.3);
+  box-shadow: 0 0 20px rgba(240,208,96,0.7), 0 0 50px rgba(196,30,58,0.4);
+}
+.tl-row.center .tl-dot {
+  background: #c9a84c;
+  box-shadow: 0 0 16px rgba(200,160,60,0.7), 0 0 40px rgba(200,160,60,0.3);
+}
+
+.tl-card .card-year {
+  font-size: 0.95rem; color: #c9a84c;
+  letter-spacing: 0.1em; margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.tl-card .card-title {
+  font-size: 1.3rem; color: #e8d48b;
+  font-weight: 700; margin-bottom: 0.7rem;
+  letter-spacing: 0.06em;
+}
+.tl-card .card-desc {
+  font-size: 0.9rem; color: #a09888;
+  line-height: 1.85;
+}
+.tl-card .card-location {
+  font-size: 0.78rem; color: #5b5550;
+  margin-top: 0.8rem; letter-spacing: 0.06em;
+}
+
+/* Spacers */
+.tl-spacer { height: 1rem; position: relative; z-index: 1; }
+
+/* ============================================================
+   ROUTE MAP SECTION
+   ============================================================ */
+#route-map { background: #0d0c18; }
+
+.map-inner { max-width: 900px; margin: 0 auto; }
+.map-svg-wrap {
+  background: linear-gradient(145deg, #100e1e, #0b0a16);
+  border: 1px solid rgba(180,130,40,0.1);
+  border-radius: 4px; padding: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+.map-svg-wrap svg { width: 100%; height: auto; display: block; }
+
+/* Map dot pulse */
+@keyframes dotPulse {
+  0%, 100% { r: 5; opacity: 0.8; }
+  50% { r: 8; opacity: 1; }
+}
+.map-dot-pulse { animation: dotPulse 2.5s ease-in-out infinite; }
+.map-dot-pulse:nth-child(1) { animation-delay: 0s; }
+.map-dot-pulse:nth-child(2) { animation-delay: 0.3s; }
+.map-dot-pulse:nth-child(3) { animation-delay: 0.6s; }
+.map-dot-pulse:nth-child(4) { animation-delay: 0.9s; }
+.map-dot-pulse:nth-child(5) { animation-delay: 1.2s; }
+.map-dot-pulse:nth-child(6) { animation-delay: 1.5s; }
+.map-dot-pulse:nth-child(7) { animation-delay: 1.8s; }
+.map-dot-pulse:nth-child(8) { animation-delay: 2.1s; }
+
+/* ============================================================
+   EVENT DETAIL SECTIONS
+   ============================================================ */
+.event-section {
+  padding: 5rem 1rem;
+  position: relative; z-index: 1;
+}
+.event-section:nth-child(odd) { background: #0a0a14; }
+.event-section:nth-child(even) { background: #0d0c18; }
+
+.event-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; gap: 2.5rem; align-items: center;
+}
+.event-inner.reverse { flex-direction: row-reverse; }
+
+.event-icon {
+  flex-shrink: 0;
+  width: 100px; height: 100px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(196,30,58,0.25), rgba(139,26,26,0.35));
+  border: 2px solid rgba(200,160,60,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.4rem; color: #e8d48b;
+  box-shadow: 0 0 40px rgba(196,30,58,0.1);
+}
+.event-body { flex: 1; }
+.event-body .event-date {
+  font-size: 0.9rem; color: #c9a84c;
+  letter-spacing: 0.1em; margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+.event-body h3 {
+  font-size: 1.5rem; color: #e8d48b;
+  font-weight: 700; margin-bottom: 0.8rem;
+  letter-spacing: 0.06em;
+}
+.event-body p {
+  font-size: 0.95rem; color: #a09888;
+  line-height: 1.9;
+}
+.event-stat {
+  display: inline-flex; gap: 1.5rem; margin-top: 1.2rem;
+  flex-wrap: wrap;
+}
+.event-stat span {
+  font-size: 0.82rem; color: #6b6058;
+  letter-spacing: 0.05em;
+}
+.event-stat strong { color: #c41e3a; font-size: 1.05rem; }
+
+/* ============================================================
+   SPIRIT CARDS
+   ============================================================ */
+#spirit { background: #0a0a14; }
+.spirit-grid {
+  max-width: 1000px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.spirit-card {
+  background: linear-gradient(145deg, rgba(22,18,32,0.9), rgba(16,12,24,0.95));
+  border: 1px solid rgba(180,130,40,0.1);
+  border-radius: 3px; padding: 2rem;
+  position: relative; overflow: hidden;
+  transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
+  opacity: 0; transform: translateY(30px);
+}
+.spirit-card.visible {
+  opacity: 1; transform: translateY(0);
+}
+.spirit-card:hover {
+  border-color: rgba(200,160,60,0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(180,20,30,0.1);
+}
+.spirit-card.visible:hover { transform: translateY(-3px); }
+.spirit-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(200,150,50,0.04), transparent 65%);
+  pointer-events: none;
+}
+.spirit-num {
+  font-size: 3rem; font-weight: 900;
+  color: rgba(196,30,58,0.1); position: absolute;
+  top: 8px; right: 18px; line-height: 1;
+}
+.spirit-card h3 {
+  color: #e8d48b; font-size: 1.25rem;
+  font-weight: 700; margin-bottom: 0.6rem;
+  position: relative; z-index: 1;
+}
+.spirit-card p {
+  color: #a09888; font-size: 0.9rem;
+  line-height: 1.8; position: relative; z-index: 1;
+}
+
+/* ============================================================
+   HERITAGE / 新时代传承
+   ============================================================ */
+#heritage {
+  position: relative; z-index: 1;
+  background: #0a0a14;
+  padding: 5rem 1rem;
+  min-height: 100vh;
+}
+#heritage::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(180,20,30,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 70%, rgba(200,150,50,0.04) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+/* Carousel */
+.heritage-carousel-wrap {
+  position: relative;
+  max-width: 1400px; margin: 0 auto;
+}
+.heritage-carousel-title {
+  text-align: center;
+  font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+  font-weight: 900; color: #e8d48b;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+.heritage-carousel-title::before,
+.heritage-carousel-title::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 100px; height: 2px;
+  transform: translateY(-50%);
+}
+.heritage-carousel-title::before {
+  left: -120px;
+  background: linear-gradient(to right, transparent, #c9a84c 70%);
+}
+.heritage-carousel-title::after {
+  right: -120px;
+  background: linear-gradient(to left, transparent, #c9a84c 70%);
+}
+.heritage-carousel-sub {
+  text-align: center; color: #a09888;
+  font-size: 0.9rem; margin-bottom: 0.3rem;
+  letter-spacing: 0.06em;
+}
+.heritage-carousel-container {
+  width: 100%; max-width: 1400px;
+  height: 420px; margin: 2rem auto 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+  border-radius: 4px;
+}
+#heritageSparkleCanvas {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+#heritageSparkleCanvas.active {
+  opacity: 1;
+}
+.heritage-carousel-track {
+  display: flex; width: max-content;
+  position: absolute; will-change: transform;
+}
+.heritage-carousel-item {
+  width: 260px; height: 370px;
+  margin: 0 14px; cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 3px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  border: 1px solid rgba(180,130,40,0.25);
+  flex-shrink: 0; display: flex; flex-direction: column;
+  background: linear-gradient(145deg, rgba(22,18,32,0.95), rgba(16,12,24,0.98));
+}
+.heritage-carousel-item:hover {
+  transform: scale(1.08);
+  z-index: 10;
+  border-color: rgba(200,160,60,0.6);
+  box-shadow: 0 8px 32px rgba(180,20,30,0.15), 0 0 60px rgba(180,20,30,0.05);
+}
+.heritage-carousel-item img {
+  width: 100%; height: 320px;
+  object-fit: cover; display: block;
+  object-position: center top; flex-shrink: 0;
+}
+.heritage-carousel-item .hci-label {
+  width: 100%; height: 50px; line-height: 50px;
+  text-align: center; color: #e8d48b;
+  background: rgba(10,8,16,0.9);
+  font-size: 0.95rem; font-weight: 600;
+  letter-spacing: 0.06em; flex-shrink: 0;
+  font-family: 'Noto Serif SC', serif;
+}
+
+/* Hot zones */
+.heritage-hotzone {
+  position: absolute; top: 0; height: 100%;
+  width: 18%; z-index: 5; cursor: pointer;
+  background: transparent;
+}
+.heritage-hotzone.left { left: 0; }
+.heritage-hotzone.right { right: 0; }
+
+/* Down arrow */
+.heritage-arrow {
+  display: block; margin: 1.5rem auto 0;
+  width: 44px; height: 44px;
+  fill: #c8c0b0; cursor: pointer;
+  animation: heritageBounce 2s infinite;
+  transition: fill 0.3s;
+}
+.heritage-arrow:hover { fill: #c9a84c; }
+@keyframes heritageBounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-16px); }
+  60% { transform: translateY(-8px); }
+}
+
+/* ============================================================
+   HERITAGE MODAL
+   ============================================================ */
+.heritage-modal {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: none; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+.heritage-modal.active { display: flex; }
+.heritage-modal-content {
+  display: flex; max-width: 90%; max-height: 90%;
+  border-radius: 3px; overflow: hidden;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.6);
+}
+.heritage-modal-img {
+  max-width: 50%; max-height: 80vh;
+  object-fit: cover;
+}
+.heritage-modal-info {
+  width: 380px; background: #faf3e6;
+  padding: 2rem; display: flex; flex-direction: column; justify-content: center;
+}
+.heritage-modal-info h3 {
+  color: #c41e3a; margin-bottom: 1rem;
+  font-size: 1.5rem; font-weight: 700;
+  font-family: 'Noto Serif SC', serif;
+}
+.heritage-modal-info p {
+  color: #3c2010; line-height: 1.8; margin-bottom: 0.8rem;
+  font-size: 0.9rem; font-family: 'Noto Serif SC', serif;
+}
+.heritage-modal-keyword {
+  display: inline-block;
+  font-weight: 700; color: #c9a84c;
+  background: rgba(184,155,88,0.1);
+  padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 1rem; font-size: 0.85rem;
+}
+
+/* ============================================================
+   HERITAGE ENVELOPE OVERLAY
+   ============================================================ */
+.heritage-overlay {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none; justify-content: center; align-items: center;
+  z-index: 50;
+  background: rgba(10,10,20,0.97);
+}
+.heritage-overlay.active { display: flex; }
+
+.heritage-envelope {
+  width: 60vw; max-width: 780px;
+  height: 40vh; max-height: 380px;
+  background: #f8f4e9;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  transform: translateY(120%);
+  border: 1px solid #d4c9a8;
+  border-radius: 3px;
+}
+.heritage-envelope.rise { transform: translateY(0); }
+
+.heritage-envelope-front {
+  position: absolute; width: 100%; height: 100%;
+  background: #f8f4e9; display: flex;
+  justify-content: center; align-items: center;
+}
+.heritage-envelope .postcode-boxes {
+  position: absolute; top: 18px; left: 18px;
+  display: flex; gap: 7px;
+}
+.heritage-envelope .postcode-boxes span {
+  width: 22px; height: 22px;
+  border: 1px solid #c41e3a;
+}
+.heritage-envelope .stamp-area {
+  position: absolute; top: 18px; right: 18px;
+  width: 56px; height: 56px;
+  border: 1px dashed #c41e3a;
+}
+.heritage-envelope .footer-info {
+  position: absolute; bottom: 18px; right: 18px;
+  text-align: right; color: #8b7355;
+  font-size: 0.72rem; line-height: 1.6;
+  font-family: 'Noto Serif SC', serif;
+}
+.heritage-envelope-flap {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 50%;
+  background: #e6dccc;
+  transform-origin: top;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
+  z-index: 10;
+  transition: transform 0.7s ease 0.2s;
+}
+.heritage-envelope.open .heritage-envelope-flap {
+  transform: rotateX(180deg);
+}
+.heritage-open-btn {
+  background: #c41e3a; color: #fff;
+  border: none; padding: 10px 28px;
+  border-radius: 25px; font-size: 1rem;
+  cursor: pointer; letter-spacing: 0.06em;
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); z-index: 20;
+  transition: background 0.3s, box-shadow 0.3s;
+  font-family: 'Noto Serif SC', serif;
+  animation: heritageBtnBreathe 2s infinite;
+}
+.heritage-open-btn:hover {
+  background: #a01020;
+  box-shadow: 0 0 20px rgba(196,30,58,0.3);
+}
+@keyframes heritageBtnBreathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* ============================================================
+   HERITAGE LETTER OVERLAY
+   ============================================================ */
+.heritage-letter {
+  width: 85vw; height: 85vh;
+  max-width: 960px; max-height: 780px;
+  background: #F5F0E6;
+  padding: 3rem 4rem;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+  overflow-y: auto; position: relative;
+  opacity: 0; transform: scale(0.92);
+  transition: all 0.7s cubic-bezier(0.16,1,0.3,1);
+  border-radius: 2px;
+}
+.heritage-letter.show { opacity: 1; transform: scale(1); }
+.heritage-letter::-webkit-scrollbar { width: 4px; }
+.heritage-letter::-webkit-scrollbar-track { background: transparent; }
+.heritage-letter::-webkit-scrollbar-thumb { background: #c8b898; border-radius: 2px; }
+
+.heritage-letter-title {
+  text-align: center; font-size: 1.6rem;
+  color: #3c2010; font-weight: 700;
+  margin-bottom: 2rem; letter-spacing: 0.08em;
+  font-family: 'Noto Serif SC', serif;
+}
+.heritage-letter-content { line-height: 2.2; font-size: 1.05rem; color: #3c2010; }
+.heritage-letter-paragraph {
+  opacity: 0; transform: translateY(20px);
+  transition: all 0.6s ease;
+  margin-bottom: 1.2rem; text-indent: 2em;
+  position: relative; font-family: 'Noto Serif SC', serif;
+}
+.heritage-letter-paragraph::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #F5F0E6;
+  transition: width 0.8s ease 0.15s;
+}
+.heritage-letter-paragraph.show { opacity: 1; transform: translateY(0); }
+.heritage-letter-paragraph.show::before { width: 0; }
+
+.heritage-letter .call-text {
+  font-size: 1.2rem; font-weight: 700;
+}
+.heritage-letter .sign-wrap {
+  margin-top: 2.5rem; padding-top: 1.5rem;
+  border-top: 1px solid #d8ccb8;
+}
+.heritage-letter .sign-title {
+  font-size: 1.1rem; font-weight: 700;
+  margin-top: 1rem; text-align: right;
+  color: #5c4033;
+}
+.sign-result {
+  text-align: right; margin-top: 0.5rem;
+  min-height: 40px;
+}
+.sign-result img {
+  max-width: 280px; max-height: 90px;
+  object-fit: contain;
+  border-radius: 2px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.heritage-sign-canvas-wrap {
+  position: relative; width: 100%; max-width: 900px;
+  height: 300px; margin: 0 auto;
+}
+.heritage-sign-canvas-wrap canvas {
+  width: 100%; height: 100%;
+  cursor: crosshair; border-radius: 2px;
+}
+.heritage-sign-imgs {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+.heritage-sign-imgs img {
+  position: absolute; width: 140px; height: auto; opacity: 0.85;
+}
+.heritage-sign-buttons {
+  display: flex; gap: 1rem; margin-top: 1rem;
+  justify-content: center;
+}
+.heritage-btn {
+  padding: 10px 28px; border: none; border-radius: 3px;
+  font-size: 0.9rem; cursor: pointer;
+  transition: background 0.3s, box-shadow 0.3s;
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 0.05em;
+}
+.heritage-btn-red {
+  background: #c41e3a; color: #fff;
+}
+.heritage-btn-red:hover {
+  background: #a01020;
+  box-shadow: 0 0 16px rgba(196,30,58,0.3);
+}
+.heritage-btn-gold {
+  background: #8b7332; color: #fff;
+}
+.heritage-btn-gold:hover {
+  background: #a08840;
+  box-shadow: 0 0 16px rgba(200,160,60,0.3);
+}
+
+/* Heritage responsive */
+@media (max-width: 768px) {
+  .heritage-carousel-container { height: 360px; }
+  .heritage-carousel-item { width: 220px; height: 320px; }
+  .heritage-carousel-item img { height: 275px; }
+  .heritage-carousel-title::before,
+  .heritage-carousel-title::after { display: none; }
+  .heritage-envelope { width: 90vw; height: 35vh; }
+  .heritage-letter { width: 94vw; height: 90vh; padding: 1.5rem; }
+  .heritage-modal-content { flex-direction: column; }
+  .heritage-modal-img { max-width: 100%; max-height: 40vh; }
+  .heritage-modal-info { width: 100%; padding: 1.2rem; }
+}
+
+@media (max-width: 480px) {
+  .heritage-carousel-container { height: 300px; }
+  .heritage-carousel-item { width: 180px; height: 270px; margin: 0 8px; }
+  .heritage-carousel-item img { height: 230px; }
+  .heritage-carousel-item .hci-label { height: 40px; line-height: 40px; font-size: 0.8rem; }
+  .heritage-envelope { width: 95vw; height: 30vh; }
+  .heritage-letter { padding: 1rem 1.2rem; }
+  .heritage-sign-imgs img { width: 100px; }
+}
+
+/* ============================================================
+   FADE-IN UTILITY
+   ============================================================ */
+.fade-up {
+  opacity: 0; transform: translateY(36px);
+  transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+              transform 0.75s cubic-bezier(0.16,1,0.3,1);
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    display: none; flex-direction: column;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: rgba(10,10,20,0.98); padding: 0.8rem;
+    border-bottom: 1px solid rgba(180,130,40,0.18);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 0.65rem 1rem; font-size: 0.85rem; }
+
+  .timeline-inner::before { left: 20px; }
+  .tl-row { justify-content: flex-start !important; padding-left: 50px; }
+  .tl-card { width: 100%; max-width: 100%; }
+  .tl-row:nth-child(odd) .tl-card::after,
+  .tl-row:nth-child(even) .tl-card::after { left: 0; right: auto; }
+  .tl-dot { left: 20px !important; }
+
+  .event-inner, .event-inner.reverse {
+    flex-direction: column; text-align: center;
+    gap: 1.5rem;
+  }
+  .event-icon { width: 70px; height: 70px; font-size: 1.8rem; }
+  .event-stat { justify-content: center; }
+  .hero-title { font-size: clamp(2.8rem, 12vw, 5rem); }
+}
+
+@media (min-width: 769px) {
+  .nav-links { display: flex !important; }
+}
+
+@media (max-width: 480px) {
+  .section { padding: 3rem 0.8rem; }
+  .event-section { padding: 3rem 0.8rem; }
+  .tl-card { padding: 1.2rem 1.2rem; }
+  .spirit-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PARTICLE CANVAS
+     ============================================================ -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="#hero" class="nav-brand">&#10022; 长征 · 信仰之路</a>
+    <button class="hamburger" id="hamburger" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#timeline">时间轴</a></li>
+      <li><a href="#route-map">长征路线</a></li>
+      <li><a href="#events">关键事件</a></li>
+      <li><a href="#spirit">长征精神</a></li>
+      <li><a href="#heritage">新时代传承</a></li>
+      <li><a href="#letter-section">致未来</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============================================================
+     HERO / COVER
+     ============================================================ -->
+<section class="hero" id="hero">
+  <h1 class="hero-title">长 征</h1>
+  <p class="hero-sub">信 仰 之 路 &middot; 两 万 五 千 里</p>
+  <div class="hero-line"></div>
+  <div class="scroll-hint">
+    <span>向下滚动 踏上征程</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TIMELINE
+     ============================================================ -->
+<section class="section" id="timeline">
+  <div class="section-header fade-up">
+    <h2>曲 折 长 征 路</h2>
+    <div class="divider"></div>
+    <p>1934年10月 — 1936年10月 &middot; 历时两年 &middot; 跨越十一省 &middot; 两万五千里</p>
+  </div>
+
+  <div class="timeline-inner">
+
+    <!-- Row 1: 长征出发 -->
+    <div class="tl-row center">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1934年10月 &middot; 江西瑞金</div>
+        <div class="card-title">中央红军开始长征</div>
+        <div class="card-desc">
+          第五次反"围剿"失败后，中央主力红军被迫实行战略转移。
+          8.6万余人从江西瑞金、于都等地出发，告别苏区乡亲，
+          踏上漫漫征程。前路茫茫，但革命的星火绝不可熄灭。
+        </div>
+        <div class="card-location">&#9873; 江西瑞金 &middot; 于都</div>
+      </div>
+    </div>
+
+    <div class="tl-spacer"></div>
+
+    <!-- Row 2: 血战湘江 -->
+    <div class="tl-row">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1934年11月 — 12月 &middot; 湘江</div>
+        <div class="card-title">血战湘江</div>
+        <div class="card-desc">
+          红军突破国民党军第四道封锁线，在湘江上游与优势敌军血战五昼夜。
+          此役红军由出发时的8.6万人锐减至3万余人，
+          鲜血染红湘江，但红军主力突破了封锁线，保存了革命火种。
+        </div>
+        <div class="card-location">&#9873; 广西兴安 &middot; 全州 &middot; 灌阳</div>
+      </div>
+    </div>
+
+    <div class="tl-spacer"></div>
+
+    <!-- Row 3: 遵义会议 -->
+    <div class="tl-row">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1935年1月 &middot; 贵州遵义</div>
+        <div class="card-title">遵义会议 &mdash; 伟大的历史转折</div>
+        <div class="card-desc">
+          中共中央政治局在遵义召开扩大会议，结束了"左"倾教条主义错误
+          在中央的统治，确立了毛泽东在红军和中共中央的领导地位。
+          这次会议在极端危急的历史关头，挽救了党、挽救了红军、挽救了中国革命。
+        </div>
+        <div class="card-location">&#9873; 贵州遵义</div>
+      </div>
+    </div>
+
+    <div class="tl-spacer"></div>
+
+    <!-- Row 4: 四渡赤水 -->
+    <div class="tl-row">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1935年1月 — 3月 &middot; 赤水河</div>
+        <div class="card-title">四渡赤水</div>
+        <div class="card-desc">
+          毛泽东指挥中央红军在川黔滇边境展开高度灵活的运动战，
+          三个月内四次往返赤水河，声东击西、忽南忽北，
+          以3万兵力摆脱了数十万敌军的围追堵截，堪称世界战争史上的奇迹。
+        </div>
+        <div class="card-location">&#9873; 贵州 &middot; 四川 &middot; 云南交界</div>
+      </div>
+    </div>
+
+    <div class="tl-spacer"></div>
+
+    <!-- Row 5: 巧渡金沙江 -->
+    <div class="tl-row">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1935年5月 &middot; 金沙江</div>
+        <div class="card-title">巧渡金沙江</div>
+        <div class="card-desc">
+          红军以声东击西之策佯攻昆明，主力则迅速北上，
+          在皎平渡口仅凭七条小船，昼夜抢渡七天七夜，
+          全军安全渡过金沙江，从此跳出国民党军的包围圈。
+        </div>
+        <div class="card-location">&#9873; 云南禄劝 &middot; 皎平渡</div>
+      </div>
+    </div>
+
+    <div class="tl-spacer"></div>
+
+    <!-- Row 6: 飞夺泸定桥 -->
+    <div class="tl-row">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1935年5月29日 &middot; 泸定桥</div>
+        <div class="card-title">飞夺泸定桥</div>
+        <div class="card-desc">
+          红四团一昼夜急行军240里，抵达泸定桥西岸。22名突击队员
+          冒着枪林弹雨，攀踏十三根悬空铁索向对岸冲锋，
+          以血肉之躯夺取了桥梁，打通了红军北上通道。
+        </div>
+        <div class="card-location">&#9873; 四川泸定 &middot; 大渡河</div>
+      </div>
+    </div>
+
+    <div class="tl-spacer"></div>
+
+    <!-- Row 7: 翻越雪山 -->
+    <div class="tl-row">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1935年6月 &middot; 夹金山</div>
+        <div class="card-title">翻越雪山</div>
+        <div class="card-desc">
+          红军翻越海拔4000多米的夹金山，山顶终年积雪、空气稀薄。
+          战士们身着单衣草鞋，以辣椒水御寒，许多人倒在了雪山上，
+          再也没能站起来。但队伍以钢铁意志征服天险，继续北上。
+        </div>
+        <div class="card-location">&#9873; 四川宝兴 &middot; 夹金山</div>
+      </div>
+    </div>
+
+    <div class="tl-spacer"></div>
+
+    <!-- Row 8: 跋涉草地 -->
+    <div class="tl-row">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1935年8月 &middot; 松潘草地</div>
+        <div class="card-title">跋涉草地</div>
+        <div class="card-desc">
+          松潘草地沼泽遍布、气候无常，红军在断粮情况下艰难跋涉，
+          以草根、树皮、皮带充饥。无数战士陷入沼泽再也没能出来，
+          但红军以超越人类极限的毅力走出了茫茫草地。
+        </div>
+        <div class="card-location">&#9873; 四川松潘 &middot; 若尔盖</div>
+      </div>
+    </div>
+
+    <div class="tl-spacer"></div>
+
+    <!-- Row 9: 胜利会师 -->
+    <div class="tl-row center" id="victoryRow">
+      <div class="tl-dot"></div>
+      <div class="tl-card">
+        <div class="card-year">1936年10月 &middot; 甘肃会宁</div>
+        <div class="card-title">三大主力胜利会师</div>
+        <div class="card-desc">
+          红一、红二、红四方面军在甘肃会宁、静宁地区会师，
+          历时两年、行程两万五千里的长征胜利结束。
+          从出发时的8.6万人到会师时的3万余人，
+          牺牲的数字背后是无法磨灭的信仰与忠诚。
+        </div>
+        <div class="card-location">&#9873; 甘肃会宁 &middot; 静宁</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     ROUTE MAP
+     ============================================================ -->
+<section class="section" id="route-map">
+  <div class="section-header fade-up">
+    <h2>长征路线图</h2>
+    <div class="divider"></div>
+    <p>从瑞金到会宁 &middot; 跨越万水千山</p>
+  </div>
+
+  <div class="map-inner">
+    <div class="map-svg-wrap fade-up">
+      <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background -->
+        <rect width="800" height="600" fill="#0f0d1c" rx="6"/>
+
+        <!-- Grid lines (subtle) -->
+        <g stroke="rgba(255,255,255,0.02)" stroke-width="0.5">
+          <line x1="0" y1="150" x2="800" y2="150"/>
+          <line x1="0" y1="300" x2="800" y2="300"/>
+          <line x1="0" y1="450" x2="800" y2="450"/>
+          <line x1="200" y1="0" x2="200" y2="600"/>
+          <line x1="400" y1="0" x2="400" y2="600"/>
+          <line x1="600" y1="0" x2="600" y2="600"/>
+        </g>
+
+        <!-- Terrain texture hints -->
+        <g fill="none" stroke="rgba(139,115,85,0.12)" stroke-width="0.8">
+          <path d="M0,200 Q100,180 200,210 Q300,240 400,200 Q500,160 600,190 Q700,220 800,180"/>
+          <path d="M0,350 Q120,330 240,360 Q360,390 480,350 Q600,310 720,340 Q760,350 800,330"/>
+          <path d="M0,500 Q150,480 300,510 Q450,540 600,500 Q700,480 800,510"/>
+        </g>
+
+        <!-- Province labels -->
+        <g font-size="13" fill="rgba(200,200,200,0.09)" font-family="'Noto Serif SC',serif" text-anchor="middle">
+          <text x="620" y="200">江西</text>
+          <text x="450" y="160">湖南</text>
+          <text x="300" y="180">贵州</text>
+          <text x="160" y="250">云南</text>
+          <text x="120" y="120">四川</text>
+          <text x="70" y="320">西康</text>
+          <text x="180" y="400">甘肃</text>
+          <text x="340" y="380">陕西</text>
+        </g>
+
+        <!-- === THE ROUTE LINE === -->
+        <!-- Main route: a winding path from Ruijin (SE) to Huining (NW) -->
+        <path d="
+          M 640,480
+          C 600,460 570,430 530,390
+          C 490,350 460,300 420,270
+          C 370,230 340,250 310,220
+          C 280,190 290,150 260,120
+          C 220,80 180,100 150,130
+          C 120,160 90,200 100,250
+          C 110,300 130,340 160,370
+          C 190,400 220,420 200,460
+          C 180,500 140,520 120,500
+        " fill="none" stroke="#c41e3a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+
+        <!-- Route glow -->
+        <path d="
+          M 640,480
+          C 600,460 570,430 530,390
+          C 490,350 460,300 420,270
+          C 370,230 340,250 310,220
+          C 280,190 290,150 260,120
+          C 220,80 180,100 150,130
+          C 120,160 90,200 100,250
+          C 110,300 130,340 160,370
+          C 190,400 220,420 200,460
+          C 180,500 140,520 120,500
+        " fill="none" stroke="#c41e3a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.15" filter="url(#routeBlur)"/>
+
+        <defs>
+          <filter id="routeBlur"><feGaussianBlur stdDeviation="4"/></filter>
+          <filter id="markerGlow"><feGaussianBlur stdDeviation="2"/></filter>
+        </defs>
+
+        <!-- Route markers with pulse animation -->
+        <!-- Ruijin (start) - gold star -->
+        <g transform="translate(640,480)" class="map-dot-pulse">
+          <circle r="6" fill="#f0d060" filter="url(#markerGlow)"/>
+          <text x="12" y="4" font-size="11" fill="#e8d48b" font-family="'Noto Serif SC',serif">瑞金 · 出发 1934.10</text>
+        </g>
+
+        <!-- Xiang River -->
+        <g transform="translate(530,390)" class="map-dot-pulse">
+          <circle r="5" fill="#c41e3a"/>
+          <text x="-72" y="-8" font-size="10" fill="#c8c0b0" font-family="'Noto Serif SC',serif">血战湘江 1934.11</text>
+        </g>
+
+        <!-- Zunyi -->
+        <g transform="translate(420,270)" class="map-dot-pulse">
+          <circle r="5" fill="#c41e3a"/>
+          <circle r="9" fill="none" stroke="#f0d060" stroke-width="1.5" opacity="0.6"/>
+          <text x="14" y="4" font-size="10" fill="#e8d48b" font-family="'Noto Serif SC',serif">遵义会议 ★ 1935.1</text>
+        </g>
+
+        <!-- Chishui -->
+        <g transform="translate(310,220)" class="map-dot-pulse">
+          <circle r="5" fill="#c41e3a"/>
+          <text x="-60" y="16" font-size="10" fill="#c8c0b0" font-family="'Noto Serif SC',serif">四渡赤水 1935.1-3</text>
+        </g>
+
+        <!-- Jinsha River -->
+        <g transform="translate(260,120)" class="map-dot-pulse">
+          <circle r="5" fill="#c41e3a"/>
+          <text x="-72" y="-8" font-size="10" fill="#c8c0b0" font-family="'Noto Serif SC',serif">巧渡金沙江 1935.5</text>
+        </g>
+
+        <!-- Luding Bridge -->
+        <g transform="translate(150,130)" class="map-dot-pulse">
+          <circle r="5" fill="#c41e3a"/>
+          <text x="14" y="-8" font-size="10" fill="#c8c0b0" font-family="'Noto Serif SC',serif">飞夺泸定桥 1935.5</text>
+        </g>
+
+        <!-- Snow mountains -->
+        <g transform="translate(100,250)" class="map-dot-pulse">
+          <circle r="5" fill="#c41e3a"/>
+          <!-- Mountain icon -->
+          <path d="M95,248 L100,238 L105,248" fill="none" stroke="#c8c0b0" stroke-width="0.8" opacity="0.5"/>
+          <text x="14" y="4" font-size="10" fill="#c8c0b0" font-family="'Noto Serif SC',serif">翻越雪山 1935.6</text>
+        </g>
+
+        <!-- Grasslands -->
+        <g transform="translate(160,370)" class="map-dot-pulse">
+          <circle r="5" fill="#c41e3a"/>
+          <text x="-68" y="-8" font-size="10" fill="#c8c0b0" font-family="'Noto Serif SC',serif">跋涉草地 1935.8</text>
+        </g>
+
+        <!-- Huining (end) - gold star -->
+        <g transform="translate(120,500)" class="map-dot-pulse">
+          <circle r="6" fill="#f0d060" filter="url(#markerGlow)"/>
+          <text x="14" y="4" font-size="11" fill="#e8d48b" font-family="'Noto Serif SC',serif">会宁 · 会师 1936.10</text>
+        </g>
+
+        <!-- Legend -->
+        <g transform="translate(24,555)">
+          <circle cx="0" cy="-3" r="4" fill="#c41e3a"/>
+          <text x="10" y="0" font-size="10" fill="#7b6b58" font-family="'Noto Serif SC',serif">关键战役</text>
+          <line x1="85" y1="-3" x2="125" y2="-3" stroke="#c41e3a" stroke-width="2" opacity="0.6"/>
+          <text x="132" y="0" font-size="10" fill="#7b6b58" font-family="'Noto Serif SC',serif">行军路线</text>
+          <circle cx="220" cy="-3" r="5" fill="#f0d060"/>
+          <text x="232" y="0" font-size="10" fill="#7b6b58" font-family="'Noto Serif SC',serif">重大事件</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     KEY EVENTS DETAIL SECTIONS
+     ============================================================ -->
+<div id="events">
+
+  <!-- 长征出发 -->
+  <div class="event-section">
+    <div class="event-inner fade-up">
+      <div class="event-icon">&#9876;</div>
+      <div class="event-body">
+        <div class="event-date">1934年10月</div>
+        <h3>长征出发</h3>
+        <p>
+          1934年10月，中央红军主力8.6万余人，从江西瑞金、于都等地集结出发。
+          在第五次反"围剿"失败后，为了保存革命力量，中共中央和中央红军
+          被迫实行战略大转移。于都河畔，苏区群众含泪相送，
+          红军将士告别故土，踏上两万五千里征程。
+        </p>
+        <div class="event-stat">
+          <span>出发兵力 <strong>8.6万</strong> 人</span>
+          <span>出发地点 <strong>瑞金·于都</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 遵义会议 -->
+  <div class="event-section">
+    <div class="event-inner reverse fade-up">
+      <div class="event-icon">&#9733;</div>
+      <div class="event-body">
+        <div class="event-date">1935年1月15日 — 17日</div>
+        <h3>遵义会议</h3>
+        <p>
+          中共中央政治局在贵州遵义召开扩大会议。会议批判了博古、李德的
+          "左"倾军事路线，取消了博古、李德的最高军事指挥权，
+          事实上确立了毛泽东在红军和中共中央的领导地位。
+          这次会议是中国共产党第一次独立自主地运用马克思主义基本原理
+          解决自身路线、方针和政策问题，标志着中国共产党从幼年走向成熟。
+        </p>
+        <div class="event-stat">
+          <span>地点 <strong>贵州遵义</strong></span>
+          <span>意义 <strong>伟大历史转折</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四渡赤水 -->
+  <div class="event-section">
+    <div class="event-inner fade-up">
+      <div class="event-icon">&#9881;</div>
+      <div class="event-body">
+        <div class="event-date">1935年1月29日 — 3月22日</div>
+        <h3>四渡赤水</h3>
+        <p>
+          遵义会议后，毛泽东指挥中央红军在川黔滇边境地区展开高度灵活的运动战。
+          一渡赤水、二渡赤水、三渡赤水、四渡赤水——三个月中四次往返赤水河，
+          声东击西，忽南忽北，佯攻贵阳，威逼昆明，以3万兵力巧妙
+          摆脱了国民党数十万大军的围追堵截。此役被毛泽东本人视为
+          其军事生涯的"得意之笔"，也是世界战争史上以少胜多的运动战典范。
+        </p>
+        <div class="event-stat">
+          <span>历时 <strong>近3个月</strong></span>
+          <span>歼敌 <strong>3万余人</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 飞夺泸定桥 -->
+  <div class="event-section">
+    <div class="event-inner reverse fade-up">
+      <div class="event-icon">&#9878;</div>
+      <div class="event-body">
+        <div class="event-date">1935年5月29日</div>
+        <h3>飞夺泸定桥</h3>
+        <p>
+          中央红军先头部队红四团接到命令后，一昼夜急行军240里，
+          于5月29日凌晨抵达泸定桥西岸。此时桥面木板已被守敌拆除大半，
+          只剩下十三根悬空的铁索。由22名勇士组成的突击队，
+          在连长廖大珠率领下，冒着东岸敌军的密集火力，
+          攀踏铁索向对岸冲锋。后续部队边铺木板边推进，
+          经过两小时激战，成功夺取泸定桥，为大部队打开了北上通道。
+        </p>
+        <div class="event-stat">
+          <span>急行军 <strong>一昼夜240里</strong></span>
+          <span>突击队 <strong>22名勇士</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 翻雪山过草地 -->
+  <div class="event-section">
+    <div class="event-inner fade-up">
+      <div class="event-icon">&#9968;</div>
+      <div class="event-body">
+        <div class="event-date">1935年6月 — 8月</div>
+        <h3>翻雪山 · 过草地</h3>
+        <p>
+          1935年6月，红军开始翻越海拔4000多米的夹金山等雪山。山顶终年积雪、
+          空气稀薄，战士们身着单衣草鞋，以辣椒水御寒。许多战士坐下休息后
+          便再也没能站起来，冻僵的身躯永远留在了雪山上。
+          随后进入松潘草地（今若尔盖湿地），沼泽遍布、气候无常。
+          在断粮的情况下，红军以草根、树皮、皮带充饥，
+          无数战士陷入沼泽牺牲。但红军以超越人类极限的毅力，
+          走出了这片"死亡之地"。
+        </p>
+        <div class="event-stat">
+          <span>翻越雪山 <strong>海拔4000米+</strong></span>
+          <span>草地行军 <strong>约一周</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 胜利会师 -->
+  <div class="event-section">
+    <div class="event-inner reverse fade-up">
+      <div class="event-icon">&#9733;</div>
+      <div class="event-body">
+        <div class="event-date">1936年10月</div>
+        <h3>胜利会师</h3>
+        <p>
+          1936年10月，红一、红二、红四方面军在甘肃会宁、静宁地区胜利会师。
+          历时两年的长征宣告结束。红军以超乎常人的毅力走过了两万五千里，
+          跨越11个省，翻越18座大山，渡过24条大河。
+          从出发时的8.6万人到会师时的3万余人，数万名红军将士
+          将生命永远留在了长征路上，但他们用鲜血和生命铸就了
+          永不褪色的长征精神。
+        </p>
+        <div class="event-stat">
+          <span>行程 <strong>两万五千里</strong></span>
+          <span>历时 <strong>两年整</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     SPIRIT
+     ============================================================ -->
+<section class="section" id="spirit">
+  <div class="section-header fade-up">
+    <h2>长征精神</h2>
+    <div class="divider"></div>
+    <p>跨越时空 &middot; 永不褪色的精神丰碑</p>
+  </div>
+
+  <div class="spirit-grid">
+    <div class="spirit-card">
+      <div class="spirit-num">01</div>
+      <h3>坚定信念</h3>
+      <p>
+        红军将士坚信革命必胜的理想，即使面对围追堵截、雪山草地、
+        饥饿寒冷，信念从未动摇。正是信仰的力量，支撑着他们走完了
+        常人所不能走的路。
+      </p>
+    </div>
+    <div class="spirit-card">
+      <div class="spirit-num">02</div>
+      <h3>不怕牺牲</h3>
+      <p>
+        湘江之畔五万英魂、雪山之上冻僵的身躯、草地深处吞噬生命的沼泽——
+        红军以超越常人的勇气直面死亡，用生命铺就了通往胜利的道路。
+      </p>
+    </div>
+    <div class="spirit-card">
+      <div class="spirit-num">03</div>
+      <h3>独立自主</h3>
+      <p>
+        遵义会议是中国共产党独立自主解决中国革命问题的开端。
+        不盲从他国经验，将马克思主义与中国实际相结合，
+        这是长征留下的宝贵启示。
+      </p>
+    </div>
+    <div class="spirit-card">
+      <div class="spirit-num">04</div>
+      <h3>百折不挠</h3>
+      <p>
+        两条腿走完两万五千里，日均行军七十里，跋涉十一省，
+        翻越十八座大山，渡过二十四条大河——每一个数字背后
+        都是不屈不挠的钢铁意志。
+      </p>
+    </div>
+    <div class="spirit-card">
+      <div class="spirit-num">05</div>
+      <h3>团结互助</h3>
+      <p>
+        干粮分着吃、棉衣让着穿、伤病员背着走，
+        生死与共的同志情谊将五湖四海的战士凝聚成不可战胜的力量。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     HERITAGE / 新时代传承
+     ============================================================ -->
+<section class="section" id="heritage">
+  <div class="section-header fade-up">
+    <h2>新时代传承</h2>
+    <div class="divider"></div>
+    
+  </div>
+
+  <div class="heritage-carousel-wrap fade-up">
+  
+    <p class="heritage-carousel-sub">我行其野，芃芃其麦</p>
+    <p class="heritage-carousel-sub">他们走在时代的前沿，将长征精神内化为生命底蕴</p>
+    <p class="heritage-carousel-sub">历经八十载精神赓续，与先辈并肩续写时代篇章</p>
+
+
+    <div class="heritage-carousel-container" id="heritageCarouselContainer">
+      <div class="heritage-hotzone left" id="heritageLeftHotzone"></div>
+      <div class="heritage-hotzone right" id="heritageRightHotzone"></div>
+
+    <div class="heritage-carousel-track" id="heritageCarouselTrack">
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/chenxiangrong.jpg" alt="陈祥榕"><div class="hci-label">陈祥榕</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/hwx.jpg" alt="黄文秀"><div class="hci-label">黄文秀</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/zgm.jpg" alt="张桂梅"><div class="hci-label">张桂梅</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/zcy.jpg" alt="周承钰"><div class="hci-label">周承钰</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/shb.jpg" alt="塞罕坝三代人"><div class="hci-label">塞罕坝三代人</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/kyyh.jpg" alt="抗疫医护群体"><div class="hci-label">抗疫医护群体</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/fjs.jpg" alt="樊锦诗"><div class="hci-label">樊锦诗</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/qqh.jpg" alt="钱七虎"><div class="hci-label">钱七虎</div></div>
+
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/chenxiangrong.jpg" alt="陈祥榕"><div class="hci-label">陈祥榕</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/hwx.jpg" alt="黄文秀"><div class="hci-label">黄文秀</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/zgm.jpg" alt="张桂梅"><div class="hci-label">张桂梅</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/zcy.jpg" alt="周承钰"><div class="hci-label">周承钰</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/shb.jpg" alt="塞罕坝三代人"><div class="hci-label">塞罕坝三代人</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/kyyh.jpg" alt="抗疫医护群体"><div class="hci-label">抗疫医护群体</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/fjs.jpg" alt="樊锦诗"><div class="hci-label">樊锦诗</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/qqh.jpg" alt="钱七虎"><div class="hci-label">钱七虎</div></div>
+
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/chenxiangrong.jpg" alt="陈祥榕"><div class="hci-label">陈祥榕</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/hwx.jpg" alt="黄文秀"><div class="hci-label">黄文秀</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/zgm.jpg" alt="张桂梅"><div class="hci-label">张桂梅</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/zcy.jpg" alt="周承钰"><div class="hci-label">周承钰</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/shb.jpg" alt="塞罕坝三代人"><div class="hci-label">塞罕坝三代人</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/kyyh.jpg" alt="抗疫医护群体"><div class="hci-label">抗疫医护群体</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/fjs.jpg" alt="樊锦诗"><div class="hci-label">樊锦诗</div></div>
+      <div class="heritage-carousel-item"><img src="plate5/近代史/picture/qqh.jpg" alt="钱七虎"><div class="hci-label">钱七虎</div></div>
+    </div>
+  </div> <!-- 闭合 heritage-carousel-container -->
+  <canvas id="heritageSparkleCanvas"></canvas> <!-- 补全缺失的星光特效画布 -->
+</div> <!-- 闭合 heritage-carousel-wrap -->
+</section> <!-- 闭合 新时代传承 整个板块 -->
+
+<div class="heritage-modal" id="heritageModal">
+  <div class="heritage-modal-content">
+    <img id="heritageModalImg" class="heritage-modal-img" src="" alt="">
+    <div class="heritage-modal-info">
+      <h3 id="heritageModalName"></h3>
+      <p id="heritageModalBio"></p>
+      <p><span class="heritage-modal-keyword" id="heritageModalKeyword"></span></p>
+      <p id="heritageModalExplanation"></p>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="letter-section" style="background:#0a0a14;">
+  <div class="section-header fade-up">
+    <h2>致未来 &mdash; 长征精神之信</h2>
+    <div class="divider"></div>
+    <p>怀揣这份精神力量，坚守初心踏实前行，不负岁月与先辈期许</p>
+  </div>
+
+  <div style="text-align:center;max-width:780px;margin:0 auto;position:relative;">
+    <div class="heritage-envelope" id="heritageEnvelopeV2" style="position:relative;transform:none;display:inline-block;width:100%;max-width:780px;height:380px;">
+      <div class="heritage-envelope-front">
+        <div class="postcode-boxes">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="stamp-area"></div>
+        <div class="footer-info">
+          新时代传承 &middot; 长征精神主题<br>
+          寄往：每一个时代新人心中
+        </div>
+        <div class="heritage-envelope-flap"></div>
+        <button class="heritage-open-btn" id="heritageOpenBtnV2">轻点开启这封信</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="heritage-overlay" id="heritageLetterOverlay">
+  <div class="heritage-letter" id="heritageLetter">
+    <h2 class="heritage-letter-title">长征精神之信</h2>
+    <div class="heritage-letter-content" id="heritageLetterContent"></div>
+    <div class="sign-wrap">
+      <div style="text-align:center;margin-bottom:8px;font-family:MaShanZheng,Segoe Script,cursive;color:#333;font-size:17px;line-height:1.8;">
+        全体红军战士<br>
+        时代楷模们
+      </div>
+      <div class="heritage-sign-canvas-wrap" id="heritageSignWrap">
+        <div class="heritage-sign-imgs">
+          <img src="plate5/近代史/sign/cz.png" style="top:15px;left:10px;">
+          <img src="plate5/近代史/sign/wch.png" style="top:15px;right:0px;">
+          <img src="plate5/近代史/sign/wzr.png" style="top:140px;left:0px;">
+          <img src="plate5/近代史/sign/cyh.png" style="bottom:20px;left:40px;">
+          <img src="plate5/近代史/sign/wsy.png" style="bottom:20px;right:0px;">
+        </div>
+        <canvas id="heritageSignatureCanvas" width="900" height="300"></canvas>
+      </div>
+      <div class="heritage-sign-buttons">
+        <button class="heritage-btn heritage-btn-red" id="heritageClearBtn">清除签名</button>
+        <button class="heritage-btn heritage-btn-gold" id="heritageSubmitBtn">提交签名</button>
+      </div>
+      <div class="sign-result" id="signResult"></div>
+    </div>
+  </div>
+</div>
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script>
+(function() {
+  /* ==========================================================
+     PARTICLE STARFIELD
+     ========================================================== */
+  var canvas = document.getElementById('particleCanvas');
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var w, h;
+  var mouseX = -100, mouseY = -100;
+  var PARTICLE_COUNT = 120;
+
+  function resizeCanvas() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // Track mouse for subtle interaction
+  document.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  // Colors: reds, golds, warm whites
+  var colors = [
+    'rgba(220,40,50,',    // red
+    'rgba(196,30,58,',    // dark red
+    'rgba(240,80,60,',   // bright red
+    'rgba(200,150,60,',   // gold
+    'rgba(220,180,80,',   // light gold
+    'rgba(240,200,100,',  // bright gold
+    'rgba(255,180,120,',  // warm
+    'rgba(200,60,40,',    // deep red
+  ];
+
+  function createParticle() {
+    var color = colors[Math.floor(Math.random() * colors.length)];
+    return {
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 2.2 + 0.5,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: -(Math.random() * 0.6 + 0.15),
+      opacity: Math.random() * 0.7 + 0.2,
+      color: color,
+      life: Math.random() * 300 + 200,
+      age: 0,
+      // Slight attraction toward mouse
+      ox: Math.random() * 0.02 - 0.01,
+      oy: Math.random() * 0.02 - 0.01
+    };
+  }
+
+  for (var i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push(createParticle());
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, w, h);
+
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+
+      // Gentle drift toward mouse
+      var dx = mouseX - p.x;
+      var dy = mouseY - p.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 250 && dist > 0) {
+        var force = (250 - dist) / 250 * 0.008;
+        p.vx += dx / dist * force;
+        p.vy += dy / dist * force;
+      }
+
+      // Dampen velocity
+      p.vx *= 0.998;
+      p.vy *= 0.998;
+
+      // Move
+      p.x += p.vx + p.ox;
+      p.y += p.vy + p.oy;
+
+      // Fade in then out
+      var fadeRatio;
+      if (p.age < 60) {
+        fadeRatio = p.age / 60;
+      } else if (p.age > p.life - 60) {
+        fadeRatio = (p.life - p.age) / 60;
+      } else {
+        fadeRatio = 1;
+      }
+      var alpha = p.opacity * fadeRatio;
+
+      // Draw particle with glow
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + alpha + ')';
+      ctx.fill();
+
+      // Glow halo
+      if (p.r > 1.2) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + (alpha * 0.15) + ')';
+        ctx.fill();
+      }
+
+      p.age++;
+
+      // Reset if dead or off-screen
+      if (p.age > p.life || p.y < -20 || p.x < -20 || p.x > w + 20 || p.y > h + 20) {
+        particles[i] = createParticle();
+        particles[i].y = h + 10 + Math.random() * 20;
+        particles[i].age = 0;
+      }
+    }
+
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  /* ==========================================================
+     NAVIGATION
+     ========================================================== */
+  var hamburger = document.getElementById('hamburger');
+  var navLinks = document.getElementById('navLinks');
+  var navAnchors = navLinks.querySelectorAll('a');
+
+  hamburger.addEventListener('click', function() {
+    navLinks.classList.toggle('open');
+    hamburger.classList.toggle('open');
+  });
+
+  // Close menu on link click (mobile)
+  navAnchors.forEach(function(a) {
+    a.addEventListener('click', function() {
+      navLinks.classList.remove('open');
+      hamburger.classList.remove('open');
+    });
+  });
+
+  // Highlight active nav link based on scroll position
+  var sections = [];
+  navAnchors.forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      var el = document.querySelector(href);
+      if (el) sections.push({ el: el, link: a });
+    }
+  });
+
+  function updateActiveNav() {
+    var scrollY = window.pageYOffset + 100;
+    var activeLink = null;
+    sections.forEach(function(s) {
+      if (s.el.offsetTop <= scrollY) {
+        activeLink = s.link;
+      }
+    });
+    navAnchors.forEach(function(a) { a.classList.remove('active'); });
+    if (activeLink) activeLink.classList.add('active');
+  }
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+  /* ==========================================================
+     INTERSECTION OBSERVER - FADE UP
+     ========================================================== */
+  var fadeObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-up').forEach(function(el) {
+    fadeObserver.observe(el);
+  });
+
+  /* ==========================================================
+     INTERSECTION OBSERVER - TIMELINE CARDS + DOTS
+     ========================================================== */
+  var tlCardObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Also mark the parent row's dot
+        var row = entry.target.closest('.tl-row');
+        if (row) row.classList.add('visible-dot');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.tl-card').forEach(function(card) {
+    tlCardObserver.observe(card);
+  });
+
+  /* ==========================================================
+     INTERSECTION OBSERVER - SPIRIT CARDS
+     ========================================================== */
+  var spiritObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+  document.querySelectorAll('.spirit-card').forEach(function(card) {
+    spiritObserver.observe(card);
+  });
+
+  /* ==========================================================
+     HERITAGE — CAROUSEL + ENVELOPE + LETTER + SIGNATURE
+     ========================================================== */
+  (function() {
+   var peopleData = [
+  { name: "陈祥榕", bio: "00后戍边战士，在加勒万河谷冲突中英勇战斗，壮烈牺牲。他在日记中写下：“清澈的爱，只为中国。”用最纯粹的青春，践行了对祖国和人民的忠诚。", keyword: "坚定信念 革命理想高于天", explanation: "在最危险的时刻，他用生命诠释了什么是革命理想高于天。", img: "plate5/近代史/picture/chenxiangrong.jpg" },
+  { name: "黄文秀", bio: "广西百坭村第一书记，放弃大城市的工作机会，主动请缨到贫困山区扶贫。她带领88户418人脱贫，2019年在山洪中因公殉职，年仅30岁。", keyword: "为民奉献 初心不改", explanation: "她把青春和生命都献给了脱贫攻坚事业，用行动践行了共产党人的初心。", img: "plate5/近代史/picture/hwx.jpg" },
+  { name: "张桂梅", bio: "丽江华坪女子高级中学校长，扎根贫困山区40余年，创办全国第一所免费女子高中，帮助2000多名山区女孩改变命运，圆了大学梦。", keyword: "艰苦奋斗 无私奉献", explanation: "她身患多种疾病，却依然坚守讲台，用生命点亮了大山里的希望。", img: "plate5/近代史/picture/zgm.jpg" },
+  { name: "周承钰", bio: "文昌航天发射场最年轻的女指挥员，在“天问一号”火星探测任务中担任火箭连接器系统指挥员，被网友称为“航天花木兰”。", keyword: "敢闯新路 勇挑重担", explanation: "她不怕苦、不怕累，在航天事业的征途上展现了新时代青年的担当。", img: "plate5/近代史/picture/zcy.jpg" },
+  { name: "塞罕坝三代人", bio: "50多年来，三代塞罕坝人在荒漠沙地上艰苦奋斗，创造了荒原变林海的人间奇迹，延续先辈坚韧奋进的风骨。", keyword: "艰苦奋斗 久久为功", explanation: "他们用三代人的青春和汗水，书写了生态文明建设的壮丽篇章。", img: "plate5/近代史/picture/shb.jpg" },
+  { name: "抗疫医护群体", bio: "新冠疫情期间，全国数百万医护人员逆行出征，连续奋战在抗疫一线，用血肉之躯筑起了守护人民生命健康的坚固防线。", keyword: "团结奋斗 不怕牺牲", explanation: "他们舍小家为大家，在没有硝烟的战场上展现了伟大的抗疫精神。", img: "plate5/近代史/picture/kyyh.jpg" },
+  { name: "樊锦诗", bio: "敦煌研究院名誉院长，扎根大漠五十余载，潜心研究与保护敦煌莫高窟，被誉为“敦煌的女儿”，用一生守护中华文脉。", keyword: "坚守不渝 甘于奉献", explanation: "半生驻守戈壁荒漠，倾尽心力守护珍贵历史文化遗产。", img: "plate5/近代史/picture/fjs.jpg" },
+  { name: "钱七虎", bio: "中国工程院院士，毕生从事国防科研与防护工程研究，为国铸盾六十余年，用科技力量守护国家安全。", keyword: "胸怀家国 矢志笃行", explanation: "深耕专业领域数十年，以学识本领守护万家安稳。", img: "plate5/近代史/picture/qqh.jpg" }
+];
+    var letterParagraphs = [
+      "亲爱的朋友：",
+      "当你缓缓翻开这封信时，长征胜利的号角已然回荡了整整九十年。",
+      "这不是一封普通的信，而是一封跨越九十年的长征精神长信。",
+      "<span class='call-text'>尽管长征已经结束，但长征精神方兴未艾，它恰似这封长笺，笔墨赓续不绝，先辈起笔记录，静待我辈落笔续写。</span>",
+      "忆往昔，风雨如晦的岁月里，红军战士身着单薄衣衫，顶着凛冽寒风翻越皑皑夹金山；饥寒交迫之时，他们以野草树皮果腹充饥，徒步跋涉茫茫松潘草地。",
+      "两万五千里漫漫征途，血战湘江、四渡赤水、飞夺泸定桥，都是他们写在信纸上最滚烫的文字。",
+      "他们以血肉铸笔、以信仰凝墨，淬炼出坚守初心、勇毅拼搏、同心共济、以身报国的崇高品格，为这份精神长信，写下厚重磅礴的开篇。",
+      "先辈们写完了峥嵘岁月的序章，却没有落下句号。",
+      "如今物阜民丰，海晏河清，因为无数新时代的追光者，早已悄然执笔续写。",
+      "看今朝，喀喇昆仑的冰峰上，年轻的战士用血肉之躯筑起界碑；大山深处的村庄里，扶贫干部以青春扎根乡土耕耘万家希望；星辰大海的征途上，航天人上下求索为千年前的“天问”揭晓答案；疫情肆虐的危急时刻，白衣天使用逆行的身影守护生命……",
+      "他们皆是新时代的长征人，秉持初心书写时代篇章，让长征精神生生不息、历久弥新。",
+      "高山仰止，景行行止。临渊羡鱼，不如退而结网。",
+      "传承长征精神，从来不是只望着先烈壮举心生感慨，也并非仅赞叹榜样奉献便止步不前。",
+      "不啻微茫，造炬成阳。这封精神长信，不应该仅仅是少数泰斗的自传，而是需要每一个新时代的我们合力撰写的时代华章。",
+      "延续精神最好的方式，便是将信念藏于心间，把担当落到实处：立足本职，踏实尽责；为人真诚，和善包容；坚韧不拔，迎难而上；心怀家国，坚守本心。",
+      "当长征精神洇染人格底色，我们便能以平凡之行肩负使命，让精神火种代代绵延。",
+      "<span class='call-text'>击鼓催征，奋楫扬帆。此刻，这封跨越百年的长征精神长信，仍留有无限留白。若你愿意，不妨执笔着墨，携手昔日前辈与今朝楷模，一同成为这封精神长信里光荣的执笔人！</span>",
+      "此致<br>敬礼！",
+      "<div style='text-align:right;margin-top:30px;'>执笔人：</div>",
+     "<p style='color:#2c2c2c;margin-top:15px;font-size:14px;text-align:center;'>（以下为签名区，拖动鼠标可进行签名）</p>"
+    ];
+
+    // DOM refs
+    var carouselTrack = document.getElementById('heritageCarouselTrack');
+    var carouselContainer = document.getElementById('heritageCarouselContainer');
+    var leftHotzone = document.getElementById('heritageLeftHotzone');
+    var rightHotzone = document.getElementById('heritageRightHotzone');
+
+    var modal = document.getElementById('heritageModal');
+    var modalImg = document.getElementById('heritageModalImg');
+    var modalName = document.getElementById('heritageModalName');
+    var modalBio = document.getElementById('heritageModalBio');
+    var modalKeyword = document.getElementById('heritageModalKeyword');
+    var modalExplanation = document.getElementById('heritageModalExplanation');
+
+    var envelope = document.getElementById('heritageEnvelopeV2');
+    var openBtn = document.getElementById('heritageOpenBtnV2');
+    var letterOverlay = document.getElementById('heritageLetterOverlay');
+    var letter = document.getElementById('heritageLetter');
+    var letterContent = document.getElementById('heritageLetterContent');
+    var canvas = document.getElementById('heritageSignatureCanvas');
+    var clearBtn = document.getElementById('heritageClearBtn');
+    var submitBtn = document.getElementById('heritageSubmitBtn');
+
+    // State
+    var position = 0;
+    var defaultSpeed = 0.5;
+    var hoverSpeed = 2.5;
+    var currentSpeed = defaultSpeed;
+    var direction = 1;
+    var isRunning = true;
+    var currentPage = 0; // 0=carousel, 1=envelope, 2=letter
+    var itemWidth = 0;
+    var isAnimating = false;
+
+    // Init carousel
+    function initCarousel() {
+      // Triple the data for seamless looping
+      var allItems = carouselTrack.querySelectorAll('.heritage-carousel-item');
+      var totalUnique = peopleData.length;
+      var firstItem = allItems[0];
+      itemWidth = firstItem.offsetWidth + 28;
+
+      allItems.forEach(function(item, i) {
+        var person = peopleData[i % totalUnique];
+        item.addEventListener('mouseenter', function() { if (currentPage === 0) isRunning = false; });
+        item.addEventListener('mouseleave', function() { if (currentPage === 0) isRunning = true; });
+        item.addEventListener('click', function() { showModal(person); });
+      });
+
+      position = itemWidth * totalUnique;
+      carouselTrack.style.transform = 'translateX(-' + position + 'px)';
+      animateCarousel();
+
+      // Hotzone hover
+      leftHotzone.addEventListener('mouseenter', function() {
+        if (currentPage === 0) { direction = -1; currentSpeed = hoverSpeed; }
+      });
+      leftHotzone.addEventListener('mouseleave', function() {
+        if (currentPage === 0) { direction = 1; currentSpeed = defaultSpeed; }
+      });
+      rightHotzone.addEventListener('mouseenter', function() {
+        if (currentPage === 0) { direction = 1; currentSpeed = hoverSpeed; }
+      });
+      rightHotzone.addEventListener('mouseleave', function() {
+        if (currentPage === 0) { direction = 1; currentSpeed = defaultSpeed; }
+      });
+    }
+
+    function animateCarousel() {
+      if (isRunning) {
+        position += currentSpeed * direction;
+        if (position >= itemWidth) {
+          carouselTrack.appendChild(carouselTrack.firstElementChild);
+          position -= itemWidth;
+        }
+        if (position <= 0) {
+          carouselTrack.insertBefore(carouselTrack.lastElementChild, carouselTrack.firstElementChild);
+          position += itemWidth;
+        }
+        carouselTrack.style.transform = 'translateX(-' + position + 'px)';
+      }
+      requestAnimationFrame(animateCarousel);
+    }
+
+    // Modal
+    function showModal(person) {
+      modalImg.src = person.img;
+      modalName.textContent = person.name;
+      modalBio.textContent = person.bio;
+      modalKeyword.textContent = person.keyword;
+      modalExplanation.textContent = person.explanation;
+      modal.classList.add('active');
+      if (currentPage === 0) isRunning = false;
+    }
+    function hideModal() {
+      modal.classList.remove('active');
+      if (currentPage === 0) isRunning = true;
+    }
+
+    // Letter content
+    function initLetterContent() {
+      letterParagraphs.forEach(function(para) {
+        var p = document.createElement('p');
+        p.className = 'heritage-letter-paragraph';
+        p.innerHTML = para;
+        letterContent.appendChild(p);
+      });
+    }
+    function showLetterLines() {
+      var paragraphs = letterContent.querySelectorAll('.heritage-letter-paragraph');
+      paragraphs.forEach(function(p, i) {
+        setTimeout(function() { p.classList.add('show'); }, i * 150);
+      });
+    }
+
+    // Open letter directly from envelope button click
+    function goToLetter() {
+      if (isAnimating) return;
+      isAnimating = true; isRunning = false;
+      envelope.classList.add('open');
+      setTimeout(function() {
+        letterOverlay.classList.add('active');
+        setTimeout(function() {
+          letter.classList.add('show');
+          setTimeout(showLetterLines, 300);
+          letter.scrollTop = 0;
+          setTimeout(function() { isAnimating = false; }, 800);
+        }, 100);
+      }, 800);
+    }
+
+    function backFromLetter() {
+      if (isAnimating) return;
+      isAnimating = true;
+      letter.classList.remove('show');
+      setTimeout(function() {
+        letterOverlay.classList.remove('active');
+        envelope.classList.remove('open');
+        isRunning = true;
+        setTimeout(function() { isAnimating = false; }, 500);
+      }, 500);
+    }
+
+    letter.addEventListener('wheel', function(e) {
+      if (isAnimating) return;
+      var scrollTop = letter.scrollTop;
+      if (e.deltaY < 0 && scrollTop <= 5) {
+        e.preventDefault();
+        backFromLetter();
+      }
+    }, { passive: false });
+
+    // Button events
+    openBtn.addEventListener('click', goToLetter);
+
+    modal.addEventListener('click', function(e) { if (e.target === modal) hideModal(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hideModal(); });
+
+    // Signature canvas
+    function initSignature() {
+      var ctx = canvas.getContext('2d');
+      var isDrawing = false;
+
+      canvas.addEventListener('mousedown', function(e) {
+        isDrawing = true;
+        var rect = canvas.getBoundingClientRect();
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        ctx.beginPath();
+        ctx.moveTo((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
+      });
+      canvas.addEventListener('mousemove', function(e) {
+        if (!isDrawing) return;
+        var rect = canvas.getBoundingClientRect();
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        ctx.lineTo((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
+        ctx.strokeStyle = '#c41e3a';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      });
+      canvas.addEventListener('mouseup', function() { isDrawing = false; });
+      canvas.addEventListener('mouseleave', function() { isDrawing = false; });
+
+      var signResult = document.getElementById('signResult');
+
+      clearBtn.addEventListener('click', function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (signResult) signResult.innerHTML = '';
+      });
+
+      submitBtn.addEventListener('click', function() {
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var hasContent = false;
+        for (var i = 3; i < imageData.data.length; i += 4) {
+          if (imageData.data[i] > 0) { hasContent = true; break; }
+        }
+        if (!hasContent) {
+          alert('请先在签名区签名后再提交。');
+          return;
+        }
+
+        // 只弹出提示，不显示签名图片
+        alert('签名提交成功！');
+      });
+    }
+
+    // Sparkle canvas — full-screen random cross stars (visible over heritage section)
+    function initSparkles() {
+      var sparkleCanvas = document.getElementById('heritageSparkleCanvas');
+      if (!sparkleCanvas) return;
+      var sparkleCtx = sparkleCanvas.getContext('2d');
+      var sparkleRunning = false;
+      var sparkleRafId = null;
+
+      function resizeSparkle() {
+        sparkleCanvas.width = window.innerWidth;
+        sparkleCanvas.height = window.innerHeight;
+      }
+      resizeSparkle();
+      window.addEventListener('resize', function() { resizeSparkle(); });
+
+      var sparkles = [];
+      var MAX = 55;
+      var colors = [
+        'rgba(240,208,96,', 'rgba(220,180,80,', 'rgba(200,160,60,',
+        'rgba(255,235,150,', 'rgba(245,220,130,', 'rgba(255,255,235,',
+        'rgba(255,245,210,', 'rgba(230,195,100,'
+      ];
+
+      function makeSparkle(start) {
+        return {
+          x: Math.random() * sparkleCanvas.width,
+          y: Math.random() * sparkleCanvas.height,
+          size: Math.random() * 10 + 2.5,
+          maxA: Math.random() * 0.4 + 0.15,
+          alpha: start ? Math.random() * 0.5 : 0,
+          phase: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.016 + 0.005,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rot: Math.random() * Math.PI / 6
+        };
+      }
+
+      function repopulate() {
+        sparkles = [];
+        for (var i = 0; i < MAX; i++) { sparkles.push(makeSparkle(true)); }
+      }
+      repopulate();
+
+      function drawStar(x, y, size, alpha, rot, color) {
+        sparkleCtx.save();
+        sparkleCtx.translate(x, y);
+        sparkleCtx.rotate(rot);
+        var L = size;
+        var W = size * 0.12;
+        sparkleCtx.beginPath();
+        sparkleCtx.moveTo(-W, -W); sparkleCtx.lineTo(0, -L); sparkleCtx.lineTo(W, -W);
+        sparkleCtx.lineTo(L, 0); sparkleCtx.lineTo(W, W);
+        sparkleCtx.lineTo(0, L); sparkleCtx.lineTo(-W, W);
+        sparkleCtx.lineTo(-L, 0); sparkleCtx.closePath();
+        sparkleCtx.fillStyle = color + alpha + ')';
+        sparkleCtx.fill();
+        sparkleCtx.beginPath();
+        sparkleCtx.arc(0, 0, size * 0.2, 0, Math.PI * 2);
+        sparkleCtx.fillStyle = 'rgba(255,255,245,' + (alpha * 1.3) + ')';
+        sparkleCtx.fill();
+        sparkleCtx.restore();
+      }
+
+      function animateSparkles() {
+        if (!sparkleRunning) return;
+        sparkleCtx.clearRect(0, 0, sparkleCanvas.width, sparkleCanvas.height);
+        sparkles.forEach(function(s) {
+          s.phase += s.speed;
+          s.alpha = s.maxA * (0.5 + 0.5 * Math.sin(s.phase));
+          if (s.alpha > 0.02) { drawStar(s.x, s.y, s.size, s.alpha, s.rot, s.color); }
+          if (Math.random() < 0.0012) { var n = makeSparkle(false); s.x = n.x; s.y = n.y; s.size = n.size; s.maxA = n.maxA; s.speed = n.speed; s.color = n.color; s.rot = n.rot; }
+        });
+        sparkleRafId = requestAnimationFrame(animateSparkles);
+      }
+
+      // Visibility observer: run only when heritage section is in view
+      var sparkleObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            sparkleCanvas.classList.add('active');
+            if (!sparkleRunning) {
+              sparkleRunning = true;
+              resizeSparkle();
+              repopulate();
+              animateSparkles();
+            }
+          } else {
+            sparkleCanvas.classList.remove('active');
+            sparkleRunning = false;
+            if (sparkleRafId) { cancelAnimationFrame(sparkleRafId); sparkleRafId = null; }
+          }
+        });
+      }, { threshold: 0.05 });
+
+      var heritageEl = document.getElementById('heritage');
+      if (heritageEl) { sparkleObserver.observe(heritageEl); }
+    }
+
+    // Lazy init: carousel starts when heritage section enters viewport
+    // Sparkle has its own visibility observer; start immediately
+    initSparkles();
+
+    var heritageSection = document.getElementById('heritage');
+    var heritageInited = false;
+    var heritageObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !heritageInited) {
+          heritageInited = true;
+          initCarousel();
+          initLetterContent();
+          initSignature();
+        }
+      });
+    }, { threshold: 0.08 });
+    if (heritageSection) {
+      heritageObserver.observe(heritageSection);
+    } else {
+      initCarousel();
+      initLetterContent();
+      initSignature();
+    }
+
+  })();
+
+  /* ==========================================================
+     INIT
+     ========================================================== */
+  updateActiveNav();
+
+})();
+</script>
+
+</body>
+</html>

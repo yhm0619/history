@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万里长征 红色征程</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{
+            background: radial-gradient(ellipse at 30% 20%, #3a1010 0%, #1a0505 40%, #0a0202 100%);
+            min-height:9000px;
+            color:#f5e9d3;
+            font-family:"Microsoft YaHei","SimHei",serif;
+            overflow-x:hidden;
+        }
+
+        /* 背景浮灰粒子层 */
+        #emberCanvas{
+            position:fixed;top:0;left:0;width:100%;height:100%;
+            z-index:0;pointer-events:none;
+        }
+
+        /* 固定标题 */
+        .title-box{
+            position:fixed;top:28px;left:50%;transform:translateX(-50%);
+            z-index:100;text-align:center;pointer-events:none;
+        }
+        .main-title{
+            font-size:clamp(26px,5vw,46px);
+            letter-spacing:8px;
+            color:#ffd700;
+            text-shadow:0 0 12px #ff8800, 0 0 30px #ff4400, 0 0 60px #cc2200;
+            animation:titleGlow 3s ease-in-out infinite;
+        }
+        @keyframes titleGlow{
+            0%,100%{text-shadow:0 0 12px #ff8800,0 0 30px #ff4400,0 0 60px #cc2200;}
+            50%{text-shadow:0 0 20px #ffaa00,0 0 45px #ff6600,0 0 80px #ee3300;}
+        }
+        .sub-title{
+            font-size:15px;margin-top:8px;opacity:0.7;letter-spacing:3px;
+        }
+
+        /* S型金线+火焰SVG层 */
+        .line-overlay{
+            position:fixed;top:0;left:0;width:100%;height:100vh;
+            z-index:5;pointer-events:none;
+        }
+
+        /* 事件容器 */
+        .event-wrap{
+            position:relative;z-index:10;
+            padding-top:130vh;
+        }
+
+        /* 事件卡片 */
+        .march-event{
+            width:82%;max-width:1200px;
+            margin:0 auto 420px;
+            display:flex;align-items:center;gap:50px;
+            opacity:0;transform:translateY(60px);
+            transition:opacity 0.9s ease, transform 0.9s ease;
+        }
+        .march-event.active{
+            opacity:1;transform:translateY(0);
+        }
+        .march-event.reverse{flex-direction:row-reverse;}
+
+        /* 图片滑动窗口 */
+        .img-window{
+            width:46%;min-width:340px;
+            height:380px;
+            border:3px solid #c8960c;
+            border-radius:14px;
+            overflow:hidden;
+            position:relative;
+            box-shadow:0 0 30px rgba(200,140,0,0.35), inset 0 0 20px rgba(0,0,0,0.5);
+            background:#1a0808;
+        }
+        .img-window::after{
+            content:"";position:absolute;top:0;left:0;width:100%;height:100%;
+            border-radius:10px;
+            box-shadow:inset 0 0 40px rgba(0,0,0,0.6);
+            pointer-events:none;z-index:2;
+        }
+        .img-slide{
+            width:100%;height:100%;
+            object-fit:cover;
+            transform:translateX(120%);
+            transition:transform 1s cubic-bezier(0.22, 0.61, 0.36, 1) 0.2s;
+            filter:sepia(0.35) brightness(0.9);
+        }
+        .reverse .img-slide{transform:translateX(-120%);}
+        .march-event.active .img-slide{transform:translateX(0);}
+
+        /* 事件文字 */
+        .event-text{width:50%;}
+        .event-name{
+            font-size:clamp(20px,3vw,28px);
+            color:#ffd700;
+            margin-bottom:18px;
+            border-left:5px solid #ff6600;
+            padding-left:16px;
+            text-shadow:0 0 8px rgba(255,150,0,0.5);
+        }
+        .event-date{
+            font-size:14px;color:#cc9944;
+            margin-bottom:10px;padding-left:21px;
+        }
+        .event-desc{
+            font-size:15px;line-height:2.1;text-indent:2em;
+            opacity:0.88;color:#e8d5b0;
+        }
+
+        /* 胜利金光爆炸 */
+        .victory-burst{
+            position:fixed;top:50%;left:50%;
+            width:0;height:0;
+            border-radius:50%;
+            transform:translate(-50%,-50%);
+            opacity:0;z-index:999;pointer-events:none;
+        }
+        .victory-burst.go{
+            animation:burstLight 1.8s ease-out forwards;
+        }
+        @keyframes burstLight{
+            0%{width:0;height:0;opacity:0.95;
+               background:radial-gradient(circle,#ffffff 0%,#ffe066 20%,#ff9900 50%,transparent 70%);}
+            30%{opacity:0.9;}
+            100%{width:2200px;height:2200px;opacity:0;
+                 background:radial-gradient(circle,#ffffff 0%,#ffe066 30%,#ff6600 60%,transparent 80%);}
+        }
+
+        /* 金色粒子爆炸 */
+        .burst-particles{
+            position:fixed;top:50%;left:50%;
+            width:0;height:0;z-index:998;pointer-events:none;
+        }
+        .burst-particle{
+            position:absolute;width:6px;height:6px;
+            background:#ffd700;border-radius:50%;
+            box-shadow:0 0 6px #ffaa00,0 0 12px #ff6600;
+        }
+
+        /* 底部结束语 */
+        .end-section{
+            text-align:center;padding:120px 0 80px;
+            position:relative;z-index:10;
+        }
+        .end-text{
+            font-size:clamp(22px,4vw,34px);
+            color:#ffd700;letter-spacing:5px;
+            text-shadow:0 0 20px #ff7700,0 0 40px #cc4400;
+            animation:titleGlow 2.5s ease-in-out infinite;
+        }
+        .end-sub{
+            font-size:16px;color:#cc9944;margin-top:16px;opacity:0.75;
+        }
+
+        /* 响应式 */
+        @media(max-width:768px){
+            .march-event,.march-event.reverse{
+                flex-direction:column;gap:24px;margin-bottom:280px;
+            }
+            .img-window,.event-text{width:92%;min-width:auto;}
+            .img-window{height:240px;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景浮灰粒子 -->
+    <canvas id="emberCanvas"></canvas>
+
+    <!-- 标题 -->
+    <div class="title-box">
+        <h1 class="main-title">万 里 长 征</h1>
+        <p class="sub-title">1934 — 1936 · 红色征程</p>
+    </div>
+
+    <!-- S型金线+火焰 SVG -->
+    <svg class="line-overlay" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet">
+        <defs>
+            <linearGradient id="goldGrad" x1="100%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#b8860b"/>
+                <stop offset="30%" stop-color="#ffd700"/>
+                <stop offset="60%" stop-color="#ffc125"/>
+                <stop offset="100%" stop-color="#ff8c00"/>
+            </linearGradient>
+            <linearGradient id="fireGrad" x1="100%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#ff2200"/>
+                <stop offset="25%" stop-color="#ff5500"/>
+                <stop offset="50%" stop-color="#ff8800"/>
+                <stop offset="75%" stop-color="#ffbb00"/>
+                <stop offset="100%" stop-color="#ffee00"/>
+            </linearGradient>
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="fireGlowFilter">
+                <feGaussianBlur stdDeviation="6" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="sparkBlur">
+                <feGaussianBlur stdDeviation="1.5"/>
+            </filter>
+        </defs>
+
+        <!-- 真实地理S型长征路线 —— 江西瑞金(右下) → 湖南/广西(西行) → 贵州(西北转) → 云南(西行) → 四川(北上) → 甘肃/陕西(左上终点) -->
+        <path id="marchPath"
+              d="M 1680 820
+                 C 1400 860, 1050 880, 820 720
+                 C 620 580, 480 620, 380 480
+                 C 280 340, 350 230, 480 160
+                 C 580 105, 650 120, 720 85"
+              fill="none" stroke="url(#goldGrad)" stroke-width="5"
+              stroke-linecap="round" stroke-linejoin="round"
+              filter="url(#glow)" opacity="0.85"/>
+
+        <!-- 火焰燃烧层（随滚动逐步燃烧） -->
+        <path id="fireLine"
+              d="M 1680 820
+                 C 1400 860, 1050 880, 820 720
+                 C 620 580, 480 620, 380 480
+                 C 280 340, 350 230, 480 160
+                 C 580 105, 650 120, 720 85"
+              fill="none" stroke="url(#fireGrad)" stroke-width="10"
+              stroke-linecap="round" stroke-linejoin="round"
+              filter="url(#fireGlowFilter)"
+              stroke-dasharray="3000" stroke-dashoffset="3000"/>
+
+        <!-- 火星飞溅拖尾容器 -->
+        <g id="sparkGroup" filter="url(#sparkBlur)"></g>
+
+        <!-- 主线上的事件节点 -->
+        <g id="eventDots" opacity="0.7">
+            <circle cx="1680" cy="820" r="5" fill="#ffd700"><animate attributeName="r" values="5;8;5" dur="2s" repeatCount="indefinite"/></circle>
+            <circle cx="1050" cy="840" r="5" fill="#ffd700"><animate attributeName="r" values="5;8;5" dur="2.2s" repeatCount="indefinite"/></circle>
+            <circle cx="820" cy="720" r="5" fill="#ffd700"><animate attributeName="r" values="5;8;5" dur="1.8s" repeatCount="indefinite"/></circle>
+            <circle cx="480" cy="620" r="5" fill="#ffd700"><animate attributeName="r" values="5;8;5" dur="2.4s" repeatCount="indefinite"/></circle>
+            <circle cx="380" cy="480" r="5" fill="#ffd700"><animate attributeName="r" values="5;8;5" dur="2s" repeatCount="indefinite"/></circle>
+            <circle cx="350" cy="310" r="5" fill="#ffd700"><animate attributeName="r" values="5;8;5" dur="2.1s" repeatCount="indefinite"/></circle>
+            <circle cx="480" cy="160" r="5" fill="#ffd700"><animate attributeName="r" values="5;8;5" dur="1.9s" repeatCount="indefinite"/></circle>
+            <circle cx="650" cy="118" r="5" fill="#ffd700"><animate attributeName="r" values="5;8;5" dur="2.3s" repeatCount="indefinite"/></circle>
+            <circle cx="720" cy="85" r="7" fill="#fff700"><animate attributeName="r" values="7;12;7" dur="1.5s" repeatCount="indefinite"/></circle>
+        </g>
+    </svg>
+
+    <!-- 胜利会师金光爆炸 -->
+    <div class="victory-burst" id="victoryLight"></div>
+    <div class="burst-particles" id="burstParticles"></div>
+
+    <!-- 长征重大事件 -->
+    <div class="event-wrap">
+
+        <!-- 1.瑞金出发 -->
+        <div class="march-event">
+            <div class="img-window">
+                <img class="img-slide" src="images1/1.jpg" alt="瑞金出发" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">一、瑞金出发 · 战略转移</h2>
+                <p class="event-date">1934年10月 · 江西瑞金</p>
+                <p class="event-desc">由于第五次反"围剿"失败，中央红军主力被迫从江西瑞金等地出发，告别中央革命根据地，开启震惊世界的万里长征。数万红军战士怀揣革命理想，踏上未知的远征之路，自此拉开二万五千里长征的伟大序幕。</p>
+            </div>
+        </div>
+
+        <!-- 2.血战湘江 -->
+        <div class="march-event reverse">
+            <div class="img-window">
+                <img class="img-slide" src="images1/2.jpg" alt="血战湘江" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">二、血战湘江 · 浴血突围</h2>
+                <p class="event-date">1934年11月—12月 · 湘江流域</p>
+                <p class="event-desc">红军在湘江流域与国民党军队展开惨烈决战。此战红军损失惨重，从出发时的八万余人锐减至三万余人，无数革命先烈血染湘江。惨烈的战斗让全党全军深刻意识到错误指挥的危害，为遵义会议的召开埋下重要伏笔。</p>
+            </div>
+        </div>
+
+        <!-- 3.遵义会议 -->
+        <div class="march-event">
+            <div class="img-window">
+                <img class="img-slide" src="images1/3.jpg" alt="遵义会议" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">三、遵义会议 · 伟大转折</h2>
+                <p class="event-date">1935年1月 · 贵州遵义</p>
+                <p class="event-desc">中共中央在贵州遵义召开政治局扩大会议，纠正党内"左"倾错误军事路线，确立毛泽东同志在党中央和红军的领导地位。此次会议是中国革命生死攸关的伟大转折点，在极端危急的关头挽救了党、挽救了红军、挽救了中国革命。</p>
+            </div>
+        </div>
+
+        <!-- 4.四渡赤水 -->
+        <div class="march-event reverse">
+            <div class="img-window">
+                <img class="img-slide" src="images1/4.jpg" alt="四渡赤水" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">四、四渡赤水 · 神来之笔</h2>
+                <p class="event-date">1935年1月—3月 · 川黔滇边境</p>
+                <p class="event-desc">遵义会议后，红军在川黔滇边境四渡赤水河，灵活机动调动敌军，声东击西、迂回穿插，彻底打乱国民党围追堵截的军事部署，跳出数十万敌军包围圈，成为长征史上最为经典的机动战例，尽显高超军事指挥艺术。</p>
+            </div>
+        </div>
+
+        <!-- 5.巧渡金沙江 -->
+        <div class="march-event">
+            <div class="img-window">
+                <img class="img-slide" src="images1/5.jpg" alt="巧渡金沙江" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">五、巧渡金沙江 · 摆脱追兵</h2>
+                <p class="event-date">1935年5月 · 云南皎平渡</p>
+                <p class="event-desc">红军趁敌军防备空虚，连夜急行军抢占皎平渡口，不费一枪一弹顺利渡过金沙江，彻底摆脱国民党主力部队的围追堵截，成功实现战略突围，红军自此取得长征路上决定性的战略主动权。</p>
+            </div>
+        </div>
+
+        <!-- 6.飞夺泸定桥 -->
+        <div class="march-event reverse">
+            <div class="img-window">
+                <img class="img-slide" src="images1/6.jpg" alt="飞夺泸定桥" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">六、飞夺泸定桥 · 勇闯天险</h2>
+                <p class="event-date">1935年5月29日 · 四川泸定</p>
+                <p class="event-desc">大渡河水流湍急，泸定桥是唯一通道。二十二名红军勇士冒着枪林弹雨，攀爬光秃秃的铁索奋勇冲锋，以无畏的牺牲精神攻克天险泸定桥，冲破敌军最后封锁，为北上抗日打通生死要道。</p>
+            </div>
+        </div>
+
+        <!-- 7.爬雪山 -->
+        <div class="march-event">
+            <div class="img-window">
+                <img class="img-slide" src="images1/7.jpg" alt="翻越夹金山" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">七、翻越雪山 · 不畏严寒</h2>
+                <p class="event-date">1935年6月 · 四川夹金山</p>
+                <p class="event-desc">红军翻越终年积雪、空气稀薄的夹金山等大雪山。战士们衣着单薄、粮草匮乏，顶着狂风暴雪艰难前行，凭借钢铁般的革命意志，征服一座座高寒雪山，战胜严酷自然险境，许多战士永远长眠于皑皑白雪之中。</p>
+            </div>
+        </div>
+
+        <!-- 8.过草地 -->
+        <div class="march-event reverse">
+            <div class="img-window">
+                <img class="img-slide" src="images1/8.jpg" alt="穿越茫茫草地" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">八、穿越草地 · 绝境求生</h2>
+                <p class="event-date">1935年8月 · 松潘大草原</p>
+                <p class="event-desc">松潘大草原沼泽遍布、荒无人烟、缺衣少食。红军将士忍饥挨饿、踏泥涉水，在绝境之中相互扶持，靠着野菜草根充饥，历经重重磨难走完茫茫草地，铸就了永不言弃、百折不挠的伟大长征精神。</p>
+            </div>
+        </div>
+
+        <!-- 9.三军会师 -->
+        <div class="march-event" id="finalEvent">
+            <div class="img-window">
+                <img class="img-slide" src="images1/9.jpg" alt="胜利会师" loading="lazy">
+            </div>
+            <div class="event-text">
+                <h2 class="event-name">九、三军会师 · 长征胜利</h2>
+                <p class="event-date">1936年10月 · 甘肃会宁</p>
+                <p class="event-desc">红一、二、四方面军在甘肃会宁胜利会师，标志着历时两年、纵横十一省、行程二万五千里的万里长征圆满结束。长征的胜利，是中国革命转危为安的关键，谱写了人类战争史上的不朽奇迹，铸就了永恒的长征精神。</p>
+            </div>
+        </div>
+
+        <div class="end-section">
+            <p class="end-text">长征精神永垂不朽</p>
+            <p class="end-sub">红色血脉代代相传 · 革命薪火生生不息</p>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        // ========== 1. 滚动控制火焰逐步燃烧 ==========
+        const fireLine = document.getElementById('fireLine');
+        const sparkGroup = document.getElementById('sparkGroup');
+        const marchPath = document.getElementById('marchPath');
+        const pathLength = marchPath.getTotalLength();
+
+        fireLine.setAttribute('stroke-dasharray', pathLength);
+        fireLine.setAttribute('stroke-dashoffset', pathLength);
+
+        let burstFired = false;
+
+        function onScroll(){
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            const scrollRate = Math.min(scrollTop / maxScroll, 1);
+
+            // 火焰进度：0→1 对应 dashoffset: pathLength→0
+            const offset = pathLength * (1 - scrollRate);
+            fireLine.style.strokeDashoffset = offset;
+
+            // ========== 2. 胜利会师金光爆炸 ==========
+            if(scrollRate >= 0.94 && !burstFired){
+                burstFired = true;
+                triggerVictoryBurst();
+            }
+
+        }
+
+        // ========== 3. 金光爆炸特效 ==========
+        function triggerVictoryBurst(){
+            const burst = document.getElementById('victoryLight');
+            burst.classList.add('go');
+            setTimeout(()=>burst.classList.remove('go'), 1900);
+
+            // 金色粒子爆炸
+            const container = document.getElementById('burstParticles');
+            const cx = window.innerWidth/2;
+            const cy = window.innerHeight/2;
+            for(let i=0;i<90;i++){
+                const p = document.createElement('div');
+                p.className = 'burst-particle';
+                const angle = (Math.PI*2*i)/90;
+                const dist = 220 + Math.random()*500;
+                const dx = Math.cos(angle)*dist;
+                const dy = Math.sin(angle)*dist;
+                const size = 3 + Math.random()*8;
+                p.style.cssText = `
+                    width:${size}px;height:${size}px;
+                    left:${cx}px;top:${cy}px;
+                    background:${Math.random()>0.5?'#ffd700':'#fff4b0'};
+                    box-shadow:0 0 ${4+Math.random()*8}px #ffaa00,0 0 ${8+Math.random()*16}px #ff6600;
+                    transition:all ${0.8+Math.random()*1.2}s cubic-bezier(0,0.7,0.3,1);
+                    opacity:1;
+                `;
+                container.appendChild(p);
+                requestAnimationFrame(()=>{
+                    p.style.transform = `translate(${dx}px,${dy}px)`;
+                    p.style.opacity = '0';
+                });
+                setTimeout(()=>p.remove(), 2200);
+            }
+        }
+
+        // ========== 4. 火星飞溅拖尾 ==========
+        function createSpark(){
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            const burnProgress = Math.min(scrollTop / maxScroll, 1);
+            if(burnProgress <= 0.01) return;
+
+            // 在已燃烧的路径段上随机取点
+            const randLen = Math.random() * pathLength * burnProgress;
+            const pt = marchPath.getPointAtLength(randLen);
+
+            const spark = document.createElementNS("http://www.w3.org/2000/svg","circle");
+            const r = 1.2 + Math.random()*3;
+            spark.setAttribute("cx", pt.x);
+            spark.setAttribute("cy", pt.y);
+            spark.setAttribute("r", r);
+            spark.setAttribute("fill", Math.random()>0.6 ? "#ffdd00" : (Math.random()>0.5?"#ff8800":"#ff4400"));
+            spark.setAttribute("opacity","1");
+            sparkGroup.appendChild(spark);
+
+            // 火星飘散动画
+            const angle = Math.random()*Math.PI*2;
+            const speed = 0.8 + Math.random()*2.5;
+            let vx = Math.cos(angle)*speed;
+            let vy = Math.sin(angle)*speed - 1.5;
+            let cx = pt.x, cy = pt.y;
+            let life = 0;
+            const maxLife = 40 + Math.random()*50;
+
+            function animateSpark(){
+                life++;
+                cx += vx;
+                cy += vy;
+                vy += 0.04;
+                spark.setAttribute("cx", cx);
+                spark.setAttribute("cy", cy);
+                spark.setAttribute("opacity", Math.max(0, 1 - life/maxLife));
+                spark.setAttribute("r", r*(1-life/maxLife));
+                if(life < maxLife) requestAnimationFrame(animateSpark);
+                else spark.remove();
+            }
+            requestAnimationFrame(animateSpark);
+        }
+
+        // ========== 5. 事件卡片滚动渐入 ==========
+        const events = document.querySelectorAll('.march-event');
+        function checkEvents(){
+            events.forEach(el=>{
+                const top = el.getBoundingClientRect().top;
+                if(top < window.innerHeight*0.78) el.classList.add('active');
+            });
+        }
+
+        // ========== 6. 背景浮灰/余烬粒子 ==========
+        const canvas = document.getElementById('emberCanvas');
+        const ctx = canvas.getContext('2d');
+        let embers = [];
+        function resizeCanvas(){
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function initEmbers(){
+            embers = [];
+            for(let i=0;i<50;i++){
+                embers.push({
+                    x:Math.random()*canvas.width,
+                    y:Math.random()*canvas.height,
+                    r:0.5+Math.random()*2,
+                    vx:(Math.random()-0.5)*0.3,
+                    vy:-0.3-Math.random()*0.8,
+                    o:0.2+Math.random()*0.4,
+                    life:Math.random()*300
+                });
+            }
+        }
+        initEmbers();
+
+        function drawEmbers(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            embers.forEach(e=>{
+                e.x += e.vx;
+                e.y += e.vy;
+                e.life--;
+                if(e.life<=0||e.y<-10||e.x<-10||e.x>canvas.width+10){
+                    e.x = Math.random()*canvas.width;
+                    e.y = canvas.height+10;
+                    e.life = 200+Math.random()*300;
+                }
+                const alpha = e.o*(e.life>30?1:e.life/30);
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.r, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255,180,60,${alpha})`;
+                ctx.fill();
+                // 微光晕
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.r*2.5, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255,140,30,${alpha*0.3})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(drawEmbers);
+        }
+        drawEmbers();
+
+        // ========== 7. 事件监听绑定 ==========
+        window.addEventListener('scroll', ()=>{
+            onScroll();
+            checkEvents();
+        }, {passive:true});
+
+        // 初始化
+        window.onload = ()=>{
+            checkEvents();
+            onScroll();
+        };
+
+        // 火花生成定时器
+        setInterval(createSpark, 100);
+    })();
+    </script>
+</body>
+</html>
